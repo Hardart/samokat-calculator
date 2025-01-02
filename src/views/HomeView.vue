@@ -144,6 +144,7 @@ const sum = computed(
         </template>
       </InputNumber>
     </div>
+    <hr />
     <div class="input-group input-group--horisontal gap-l">
       <div class="input-group input-group--horisontal gap-s">
         <Checkbox v-model="isWeather" inputId="weather" name="weather" binary />
@@ -159,7 +160,7 @@ const sum = computed(
         <label for="last-week-hours">30ч</label>
       </div>
     </div>
-    <hr />
+
     <div class="sum">
       <p class="sum__title">Заработал сегодня</p>
       <h3 class="sum__value">{{ sum }} ₽</h3>
