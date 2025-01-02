@@ -1,0 +1,64 @@
+@import 'primeicons/primeicons.css';
+
+.calculator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 80dvh;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+input {
+  max-width: 100px;
+  text-align: center;
+}
+
+.input-group {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.input-group--horisontal {
+  display: flex;
+}
+
+.gap {
+  gap: 10px;
+}
+
+.gap-s {
+  gap: 5px;
+}
+
+.gap-m {
+  gap: 15px;
+}
+
+.gap-l {
+  gap: 20px;
+}
+
+.sum {
+  margin-top: auto;
+  justify-self: end;
+  align-items: center;
+}
+
+.sum__title {
+  font-size: 1.2rem;
+}
+
+.sum__value {
+  text-align: center;
+  font-size: 3rem;
+}
+
+hr {
+  width: 100%;
+  margin-bottom: 15px;
+  opacity: 0.3;
+}
