@@ -5,6 +5,7 @@
   flex-direction: column;
   align-items: center;
   height: 80dvh;
+  margin-top: 20px;
 }
 
 label {
@@ -42,8 +43,22 @@ input {
   gap: 20px;
 }
 
+.feeds {
+  margin-top: 15px;
+}
+
+.feed-day {
+  color: var(--color-text);
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.feed-day__price {
+  font-weight: 700;
+}
+
 .sum {
-  margin-top: auto;
+  margin-top: 10px;
   justify-self: end;
   align-items: center;
 }
@@ -59,6 +74,24 @@ input {
 
 hr {
   width: 100%;
-  margin-bottom: 15px;
   opacity: 0.3;
+}
+
+.card {
+  width: 300px;
+}
+
+.date,
+.rating {
+  position: absolute;
+  top: 10px;
+  font-size: 0.7rem;
+}
+
+.date {
+  left: 15px;
+}
+
+.rating {
+  right: 15px;
 }
