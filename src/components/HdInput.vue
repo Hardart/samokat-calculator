@@ -17,7 +17,13 @@ defineProps<{
   <div>
     <label :for="id" v-if="label">{{ label }}</label>
     <div class="custom-input">
-      <input type="text" class="inputtext" :id v-model.number="model" />
+      <input
+        type="text"
+        inputmode="numeric"
+        class="inputtext"
+        :id
+        v-model.number="model"
+      />
       <button
         class="pi pi-plus inputnumber-button inputbutton-end"
         @click="model++"
