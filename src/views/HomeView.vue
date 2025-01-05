@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import HdInput from '@/components/HdInput.vue'
+import { useLocalStorage } from '@vueuse/core'
 import {
   Checkbox,
   InputNumber,
@@ -6,17 +8,35 @@ import {
   AccordionContent,
   AccordionHeader,
   AccordionPanel,
+  Button,
 } from 'primevue'
 import { computed, ref } from 'vue'
+
+interface Period {
+  hours: number
+  orders: number
+  profit: number
+}
+
+interface LocalDataBase {
+  period: number[]
+  profitForPeriod: number
+  periods: Record<string, Period>[][]
+  totalForAll: number
+}
+
 const ORDER = 40
 const MORNING = 30
 const EVENING = 5
 const NIGHT = 70
+
 const HOUR = 130
 const WEATHER = 10
 const LAST_WEEK_HOURS = 10
+
 const DAY_FEED = 15
 const FEED_DAYS = [0, 1]
+
 const today = new Date().getDay()
 
 const hours = ref(0)
@@ -27,12 +47,13 @@ const nightOrders = ref(0)
 const isWeather = ref(false)
 const isLastWeekHours = ref(false)
 
-const orderPrice = computed(() => {
+const calcOrderPrice = computed(() => {
   let price = ORDER
   if (isWeather.value) price += WEATHER
   return price
 })
 const isFeedDaysIncludeToday = computed(() => FEED_DAYS.includes(today))
+
 const hourPrice = computed(() => {
   let price = HOUR
   if (isLastWeekHours.value) price += LAST_WEEK_HOURS
@@ -41,27 +62,30 @@ const hourPrice = computed(() => {
 })
 
 const calcOrders = computed(() => {
-  let price =
-    orders.value - morningOrders.value - eveningOrders.value - nightOrders.value
+  let orderPrice = orders.value * calcOrderPrice.value
 
-  return price * orderPrice.value
+  if (orders.value >= morningOrders.value) {
+    orderPrice += morningOrders.value * MORNING
+  } else if (morningOrders.value) {
+    orderPrice += orders.value * MORNING
+  }
+
+  if (orders.value >= eveningOrders.value) {
+    orderPrice += eveningOrders.value * EVENING
+  } else if (eveningOrders.value) {
+    orderPrice += orders.value * EVENING
+  }
+
+  if (orders.value >= nightOrders.value) {
+    orderPrice += nightOrders.value * NIGHT
+  } else if (nightOrders.value) {
+    orderPrice += orders.value * NIGHT
+  }
+
+  return orderPrice
 })
 
-const calcMorningOrders = computed(
-  () => morningOrders.value * (orderPrice.value + MORNING) + calcOrders.value
-)
-
-const calcEveningOrders = computed(
-  () =>
-    eveningOrders.value * (orderPrice.value + EVENING) + calcMorningOrders.value
-)
-const calcNightOrders = computed(
-  () => nightOrders.value * (orderPrice.value + NIGHT) + calcEveningOrders.value
-)
-
-const sum = computed(
-  () => hours.value * hourPrice.value + calcNightOrders.value
-)
+const profit = computed(() => hours.value * hourPrice.value + calcOrders.value)
 const todayDate = Intl.DateTimeFormat('ru-RU', {
   weekday: 'long',
   day: 'numeric',
@@ -79,6 +103,48 @@ const rating = computed(() => {
 const weekday = Intl.DateTimeFormat('ru-RU', {
   weekday: 'long',
 }).format(new Date())
+
+const localDB = useLocalStorage('db', {} as LocalDataBase)
+if (localDB.value.period.includes(7)) {
+  reset()
+}
+const save = () => {
+  if (!localDB.value.periods) localDB.value.periods = []
+  if (!localDB.value.period) localDB.value.period = []
+
+  const day = new Date().getDay() === 0 ? 7 : new Date().getDay()
+  if (!localDB.value.period.includes(day)) localDB.value.period.push(day)
+
+  const lastPerod = localDB.value.period.length - 1
+  if (!localDB.value.periods[lastPerod]) localDB.value.periods[lastPerod] = []
+
+  const period: Period = {
+    hours: hours.value,
+    orders: orders.value,
+    profit: profit.value,
+  }
+
+  const localPeriod = localDB.value.periods[lastPerod]
+
+  if (localPeriod.some((item) => todayDate in item)) return
+  localPeriod.push({ [todayDate]: period })
+  localDB.value.profitForPeriod += profit.value
+  localDB.value.totalForAll += orders.value
+}
+
+const isSaved = computed(
+  () =>
+    localDB.value.periods &&
+    localDB.value.periods.some((period) =>
+      period.some((item) => todayDate in item)
+    )
+)
+function reset() {
+  localDB.value.profitForPeriod = 0
+  localDB.value.totalForAll = 0
+  localDB.value.periods = []
+  localDB.value.period = []
+}
 </script>
 
 <template>
@@ -90,40 +156,11 @@ const weekday = Intl.DateTimeFormat('ru-RU', {
       <h3>Нагрузка: {{ rating }}</h3>
     </div>
     <div class="input-group">
-      <label for="hours">Количество часов</label>
-      <InputNumber
-        input-id="hours"
-        v-model="hours"
-        showButtons
-        buttonLayout="horizontal"
-        :min="0"
-        :max="99"
-      >
-        <template #incrementicon>
-          <span class="pi pi-plus" />
-        </template>
-        <template #decrementicon>
-          <span class="pi pi-minus" />
-        </template>
-      </InputNumber>
+      <InputNumber class="hidden" />
+      <HdInput v-model="hours" label="Количество часов" id="hours" />
     </div>
     <div class="input-group">
-      <label for="hours">Количество заказов</label>
-      <InputNumber
-        input-id="orders"
-        v-model="orders"
-        showButtons
-        buttonLayout="horizontal"
-        :min="0"
-        :max="99"
-      >
-        <template #incrementicon>
-          <span class="pi pi-plus" />
-        </template>
-        <template #decrementicon>
-          <span class="pi pi-minus" />
-        </template>
-      </InputNumber>
+      <HdInput v-model.number="orders" label="Количество заказов" id="orders" />
     </div>
 
     <div class="card">
@@ -132,58 +169,25 @@ const weekday = Intl.DateTimeFormat('ru-RU', {
           <AccordionHeader>Надбавки</AccordionHeader>
           <AccordionContent>
             <div class="input-group">
-              <label for="morning">Утренние заказы (7:00-9:00)</label>
-              <InputNumber
-                input-id="morning"
+              <HdInput
                 v-model="morningOrders"
-                showButtons
-                buttonLayout="horizontal"
-                :min="0"
-                :max="99"
-              >
-                <template #incrementicon>
-                  <span class="pi pi-plus" />
-                </template>
-                <template #decrementicon>
-                  <span class="pi pi-minus" />
-                </template>
-              </InputNumber>
+                label="Утренние заказы (7:00-9:00)"
+                id="morning"
+              />
             </div>
             <div class="input-group">
-              <label for="evening">Вечерние заказы (18:00-23:00)</label>
-              <InputNumber
-                input-id="evening"
+              <HdInput
                 v-model="eveningOrders"
-                showButtons
-                buttonLayout="horizontal"
-                :min="0"
-                :max="99"
-              >
-                <template #incrementicon>
-                  <span class="pi pi-plus" />
-                </template>
-                <template #decrementicon>
-                  <span class="pi pi-minus" />
-                </template>
-              </InputNumber>
+                label="Вечерние заказы (18:00-23:00)"
+                id="eveningOrders"
+              />
             </div>
             <div class="input-group">
-              <label for="night">Ночные заказы (23:00-01:00)</label>
-              <InputNumber
-                input-id="night"
+              <HdInput
                 v-model="nightOrders"
-                showButtons
-                buttonLayout="horizontal"
-                :min="0"
-                :max="99"
-              >
-                <template #incrementicon>
-                  <span class="pi pi-plus" />
-                </template>
-                <template #decrementicon>
-                  <span class="pi pi-minus" />
-                </template>
-              </InputNumber>
+                label="Ночные заказы (23:00-01:00)"
+                id="nightOrders"
+              />
             </div>
             <hr />
             <div class="feeds input-group input-group--horisontal gap-l">
@@ -217,7 +221,17 @@ const weekday = Intl.DateTimeFormat('ru-RU', {
 
     <div class="sum">
       <p class="sum__title">Заработал сегодня</p>
-      <h3 class="sum__value">{{ sum }} ₽</h3>
+      <h3 class="sum__value">{{ profit }} ₽</h3>
+      <p class="sum__title">Заработал за неделю</p>
+      <h3 class="sum__value">{{ localDB.profitForPeriod }} ₽</h3>
+      <Button
+        label="Сохранить"
+        class="save-btn"
+        fluid
+        @click="save"
+        :disabled="isSaved || profit === 0"
+      />
+      <!-- <Button label="Обнулить" fluid @click="reset" /> -->
     </div>
   </main>
 </template>
