@@ -1,4 +1,13 @@
 @import 'primeicons/primeicons.css';
+@import 'input.css';
+
+.save-btn {
+  margin-top: 20px;
+}
+
+.hidden {
+  display: none !important;
+}
 
 .calculator {
   display: flex;
@@ -64,12 +73,17 @@ input {
 }
 
 .sum__title {
-  font-size: 1.2rem;
+  text-align: center;
+  font-size: 1.1rem;
+}
+
+.sum__value + .sum__title {
+  margin-top: 25px;
 }
 
 .sum__value {
   text-align: center;
-  font-size: 3rem;
+  font-size: 2.5rem;
 }
 
 hr {
