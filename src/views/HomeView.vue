@@ -105,7 +105,7 @@ const weekday = Intl.DateTimeFormat('ru-RU', {
 }).format(new Date())
 
 const localDB = useLocalStorage('db', {} as LocalDataBase)
-if (localDB.value.period.includes(7)) {
+if (localDB.value.period && localDB.value.period.includes(7)) {
   reset()
 }
 const save = () => {
@@ -232,6 +232,7 @@ function reset() {
         :disabled="isSaved || profit === 0"
       />
       <!-- <Button label="Обнулить" fluid @click="reset" /> -->
+      {{ localDB }}
     </div>
   </main>
 </template>
