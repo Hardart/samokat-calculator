@@ -223,7 +223,7 @@ function reset() {
       <p class="sum__title">Заработал сегодня</p>
       <h3 class="sum__value">{{ profit }} ₽</h3>
       <p class="sum__title">Заработал за неделю</p>
-      <h3 class="sum__value">{{ localDB.profitForPeriod }} ₽</h3>
+      <h3 class="sum__value">{{ localDB.profitForPeriod || 0 }} ₽</h3>
       <Button
         label="Сохранить"
         class="save-btn"
@@ -232,7 +232,6 @@ function reset() {
         :disabled="isSaved || profit === 0"
       />
       <!-- <Button label="Обнулить" fluid @click="reset" /> -->
-      {{ localDB }}
     </div>
   </main>
 </template>
