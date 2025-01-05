@@ -108,6 +108,9 @@ const localDB = useLocalStorage('db', {} as LocalDataBase)
 if (localDB.value.period && localDB.value.period.includes(7)) {
   reset()
 }
+if (typeof localDB.value.profitForPeriod === 'undefined')
+  localDB.value.profitForPeriod = 0
+
 const save = () => {
   if (!localDB.value.periods) localDB.value.periods = []
   if (!localDB.value.period) localDB.value.period = []
@@ -223,7 +226,7 @@ function reset() {
       <p class="sum__title">Заработал сегодня</p>
       <h3 class="sum__value">{{ profit }} ₽</h3>
       <p class="sum__title">Заработал за неделю</p>
-      <h3 class="sum__value">{{ localDB.profitForPeriod || 0 }} ₽</h3>
+      <h3 class="sum__value">{{ localDB.profitForPeriod }} ₽</h3>
       <Button
         label="Сохранить"
         class="save-btn"
@@ -231,7 +234,7 @@ function reset() {
         @click="save"
         :disabled="isSaved || profit === 0"
       />
-      <!-- <Button label="Обнулить" fluid @click="reset" /> -->
+      <Button label="Обнулить" fluid @click="reset" />
     </div>
   </main>
 </template>
