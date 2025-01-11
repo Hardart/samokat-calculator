@@ -1,4 +1,6 @@
 .inputtext {
+  --p-inputtext-padding-y: 12px;
+  --p-inputtext-padding-x: 12px;
   font-family: inherit;
   font-feature-settings: inherit;
   font-size: 1rem;
@@ -16,6 +18,7 @@
   outline-color: transparent;
   box-shadow: var(--p-inputtext-shadow);
   order: 2;
+  border-radius: 0;
 }
 
 .custom-input {
@@ -40,6 +43,7 @@
 }
 
 .inputnumber-button {
+  --p-inputnumber-button-width: 3rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -52,4 +56,5 @@
     color var(--p-inputnumber-transition-duration),
     border-color var(--p-inputnumber-transition-duration),
     outline-color var(--p-inputnumber-transition-duration);
+  z-index: 2;
 }
