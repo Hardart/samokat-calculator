@@ -1,0 +1,35 @@
+<script lang="ts" setup>
+import { computed } from 'vue'
+import { Button } from 'primevue'
+import { settings } from '@/shared/localData'
+import { formattedDate } from '@/shared/utils'
+import { hoursData } from '@/shared/hoursData'
+import { ordersData } from '@/shared/ordersData'
+
+const ratingForDay = computed(() => {
+  const rating = ordersData.value.orders / hoursData.value.hours
+  return Number.isNaN(rating) || !Number.isFinite(rating) || !rating
+    ? 0
+    : Number(rating).toFixed(2)
+})
+</script>
+
+<template>
+  <div class="calculator__information">
+    <div class="date">
+      <h3>{{ formattedDate }}</h3>
+    </div>
+
+    <div class="settings-btn">
+      <Button
+        icon="pi pi-cog"
+        severity="secondary"
+        @click="settings.isOpen = true"
+        aria-label="settings"
+      />
+    </div>
+    <div class="rating">
+      <h3>Нагрузка: {{ ratingForDay }}</h3>
+    </div>
+  </div>
+</template>

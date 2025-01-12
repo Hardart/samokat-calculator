@@ -41,6 +41,7 @@ const today = new Date().getDay()
 
 const hours = ref(0)
 const orders = ref(0)
+const tips = ref(0)
 const morningOrders = ref(0)
 const eveningOrders = ref(0)
 const nightOrders = ref(0)
@@ -85,7 +86,10 @@ const calcOrders = computed(() => {
   return orderPrice
 })
 
-const profit = computed(() => hours.value * hourPrice.value + calcOrders.value)
+const profitForDay = computed(
+  () => hours.value * hourPrice.value + calcOrders.value + tips.value
+)
+
 const todayDate = Intl.DateTimeFormat('ru-RU', {
   weekday: 'long',
   day: 'numeric',
@@ -105,9 +109,9 @@ const weekday = Intl.DateTimeFormat('ru-RU', {
 }).format(new Date())
 
 const localDB = useLocalStorage('db', {} as LocalDataBase)
-if (localDB.value.period && localDB.value.period.includes(7)) {
-  reset()
-}
+
+if (localDB.value.period && localDB.value.period.includes(1)) reset()
+
 if (typeof localDB.value.profitForPeriod === 'undefined')
   localDB.value.profitForPeriod = 0
 
@@ -124,14 +128,14 @@ const save = () => {
   const period: Period = {
     hours: hours.value,
     orders: orders.value,
-    profit: profit.value,
+    profit: profitForDay.value,
   }
 
   const localPeriod = localDB.value.periods[lastPerod]
 
   if (localPeriod.some((item) => todayDate in item)) return
   localPeriod.push({ [todayDate]: period })
-  localDB.value.profitForPeriod += profit.value
+  localDB.value.profitForPeriod += profitForDay.value
   localDB.value.totalForAll += orders.value
 }
 
@@ -142,6 +146,7 @@ const isSaved = computed(
       period.some((item) => todayDate in item)
     )
 )
+
 function reset() {
   localDB.value.profitForPeriod = 0
   localDB.value.totalForAll = 0
@@ -223,8 +228,16 @@ function reset() {
     </div>
 
     <div class="sum">
+      <div class="input-group">
+        <HdInput
+          showButtons
+          v-model.number="tips"
+          label="Чаевые за день"
+          id="tips"
+        />
+      </div>
       <p class="sum__title">Заработал сегодня</p>
-      <h3 class="sum__value">{{ profit }} ₽</h3>
+      <h3 class="sum__value">{{ profitForDay }} ₽</h3>
       <p class="sum__title">Заработал за неделю</p>
       <h3 class="sum__value">{{ localDB.profitForPeriod }} ₽</h3>
       <Button
@@ -232,7 +245,7 @@ function reset() {
         class="save-btn"
         fluid
         @click="save"
-        :disabled="isSaved || profit === 0"
+        :disabled="isSaved || profitForDay === 0"
       />
       <Button label="Обнулить" fluid @click="reset" />
     </div>

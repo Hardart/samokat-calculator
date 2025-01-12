@@ -10,6 +10,7 @@ const model = defineModel<number>({
 defineProps<{
   label?: string
   id?: string
+  showButtons?: boolean
 }>()
 </script>
 
@@ -25,10 +26,12 @@ defineProps<{
         v-model.number="model"
       />
       <button
+        v-if="!showButtons"
         class="pi pi-plus inputnumber-button inputbutton-end"
         @click="model++"
       />
       <button
+        v-if="!showButtons"
         class="pi pi-minus inputnumber-button inputbutton-start"
         @click="model--"
         :disabled="model == 0"

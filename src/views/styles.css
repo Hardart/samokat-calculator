@@ -19,7 +19,7 @@
 
 label {
   display: block;
-  margin-bottom: 5px;
+  font-size: 12px;
 }
 
 input {
@@ -28,12 +28,16 @@ input {
 }
 
 .input-group {
-  margin-bottom: 20px;
+  align-items: center;
   text-align: center;
 }
 
 .input-group--horisontal {
   display: flex;
+}
+
+.input-group--align-center {
+  align-items: center;
 }
 
 .gap {
@@ -50,6 +54,14 @@ input {
 
 .gap-l {
   gap: 20px;
+}
+
+.mt-s {
+  margin-top: 10px;
+}
+
+.mt-m {
+  margin-top: 15px;
 }
 
 .feeds {
@@ -75,10 +87,6 @@ input {
 .sum__title {
   text-align: center;
   font-size: 1.1rem;
-}
-
-.sum__value + .sum__title {
-  margin-top: 25px;
 }
 
 .sum__value {
@@ -108,4 +116,10 @@ hr {
 
 .rating {
   right: 15px;
+}
+
+.settings-btn {
+  position: fixed;
+  right: 20px;
+  bottom: 30px;
 }
