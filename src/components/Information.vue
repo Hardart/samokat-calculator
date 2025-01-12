@@ -22,6 +22,12 @@ const ratingForDay = computed(() => {
 
     <div class="settings-btn">
       <Button
+        icon="pi pi-wallet"
+        severity="secondary"
+        @click="settings.isOpenFeeds = true"
+        aria-label="feeds"
+      />
+      <Button
         icon="pi pi-cog"
         severity="secondary"
         @click="settings.isOpen = true"

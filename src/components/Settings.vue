@@ -11,15 +11,6 @@ import { settings, companies, isShowLastWeekHours } from '@/shared/localData'
     :style="{ width: '25rem' }"
   >
     <div class="feeds input-group input-group--horisontal gap-l">
-      <div class="input-group input-group--horisontal gap-s">
-        <Checkbox
-          v-model="settings.isExtraWeatherMoney"
-          inputId="weather"
-          name="weather"
-          binary
-        />
-        <label for="weather">Погода</label>
-      </div>
       <div
         class="input-group input-group--horisontal gap-s"
         v-if="isShowLastWeekHours"

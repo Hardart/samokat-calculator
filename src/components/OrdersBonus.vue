@@ -1,8 +1,9 @@
 <script lang="ts" setup>
-import { ordersData } from '@/shared/ordersData'
-import { formattedWeekday } from '@/shared/utils'
 import HdInput from '@/components/HdInput.vue'
-import { hoursData, isTodayExtraMoneyHourDay } from '@/shared/hoursData'
+import { ordersData } from '@/shared/ordersData'
+import { hoursData } from '@/shared/hoursData'
+import { settings } from '@/shared/localData'
+
 import {
   Accordion,
   AccordionPanel,
@@ -39,8 +40,8 @@ import {
             />
           </div>
 
-          <p v-if="isTodayExtraMoneyHourDay" class="feed-day">
-            Прибавка за {{ formattedWeekday }}:
+          <p v-if="settings.isExtraDay" class="feed-day">
+            Действует прибавка к часу:
             <span class="feed-day__price">
               {{ hoursData.EXTRA_MONEY_PER_HOUR }}₽
             </span>

@@ -3,7 +3,7 @@ import { useLocalStorage } from '@vueuse/core'
 import { computed } from 'vue'
 import { today } from './utils'
 
-type Company = '2 колеса' | 'Альянс' | undefined
+type Company = '2 колеса' | 'Альянс' | 'Бриг' | 'Звезда' | undefined
 
 interface Shift {
   date: Date | null
@@ -14,13 +14,15 @@ interface Shift {
   profit: number
 }
 
-export const companies: Company[] = ['2 колеса', 'Альянс']
+export const companies: Company[] = ['2 колеса', 'Альянс', 'Бриг', 'Звезда']
 
 export const settings = useLocalStorage('settings', {
   isOpen: false,
+  isOpenFeeds: false,
   isBicycle: false,
   isLastWeekHours: false,
   isExtraWeatherMoney: false,
+  isExtraDay: false,
   company: '',
   userId: '',
 })

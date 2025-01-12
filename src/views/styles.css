@@ -79,7 +79,7 @@ input {
 }
 
 .sum {
-  margin-top: 10px;
+  margin-top: 40px;
   justify-self: end;
   align-items: center;
 }
@@ -120,6 +120,8 @@ hr {
 
 .settings-btn {
   position: fixed;
+  display: grid;
+  row-gap: 20px;
   right: 20px;
   bottom: 30px;
 }
