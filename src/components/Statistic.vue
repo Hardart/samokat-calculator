@@ -49,13 +49,14 @@ import {
           </li>
         </template>
       </ul>
-      <div class="period-total">
+      <div class="period-total" v-if="shiftsTotal.hours">
         <h3 class="period-total__title">За неделю</h3>
         <div>Отработал - {{ formatHours(shiftsTotal.hours) }}</div>
         <div>Выполнил - {{ formatOrders(shiftsTotal.orders) }}</div>
         <div>Получил чаевых - {{ shiftsTotal.tips }}₽</div>
         <div>Заработал - {{ shiftsTotal.profit }}₽</div>
       </div>
+      <h3 v-else>За этот период пока нет сохраненных данных</h3>
     </div>
   </Dialog>
 </template>

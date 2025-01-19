@@ -49,10 +49,9 @@ export function formatOrders(number: number) {
 
 function getWeekRange(weekShift: number = 0) {
   const now = new Date()
-  const weekday = now.getDay() === 0 ? 6 : now.getDay()
+  const weekday = now.getDay() === 0 ? 6 : now.getDay() - 1
   const setDate = now.getDate() - weekday - weekShift * 7
   const startOfWeek = new Date(now.setDate(setDate)) // Понедельник
-
   const endOfWeek = new Date(now.setDate(startOfWeek.getDate() + 6)) // Воскресенье
 
   return {
