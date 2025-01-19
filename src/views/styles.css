@@ -1,5 +1,13 @@
 @import 'primeicons/primeicons.css';
+@import 'reset.css';
 @import 'input.css';
+@import 'period.css';
+@import 'company.css';
+
+.linethrough {
+  text-decoration: line-through;
+  color: darkgreen;
+}
 
 .save-btn {
   margin-top: 20px;
@@ -118,10 +126,18 @@ hr {
   right: 15px;
 }
 
-.settings-btn {
+.settings-btn,
+.statistic-btn {
   position: fixed;
   display: grid;
   row-gap: 20px;
-  right: 20px;
   bottom: 30px;
+}
+
+.settings-btn {
+  right: 20px;
+}
+
+.statistic-btn {
+  left: 20px;
 }

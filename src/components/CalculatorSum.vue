@@ -6,7 +6,8 @@ import { today } from '@/shared/utils'
 import { hoursData, hoursSum } from '@/shared/hoursData'
 import { ordersData, ordersSum } from '@/shared/ordersData'
 import { settings, shift, shifts } from '@/shared/localData'
-import { isShiftSaved, profitForPeriod } from '@/shared/localData'
+import { isShiftSaved } from '@/shared/localData'
+import { resetAllData } from '@/shared/generalData'
 
 const profitForDay = computed(
   () => hoursSum.value + ordersSum.value + ordersData.value.tips
@@ -22,10 +23,7 @@ const save = () => {
   shift.profit = profitForDay.value
   shifts.value.push(shift)
 
-  ordersData.value.orders = 0
-  hoursData.value.hours = 0
-  ordersData.value.tips = 0
-  settings.value.isExtraWeatherMoney = false
+  resetAllData()
 }
 </script>
 
@@ -33,15 +31,14 @@ const save = () => {
   <div class="sum">
     <p class="sum__title">Заработал сегодня</p>
     <h3 class="sum__value">{{ profitForDay }} ₽</h3>
-    <p class="sum__title">Заработал за неделю</p>
-    <h3 class="sum__value">{{ profitForPeriod }} ₽</h3>
 
     <Button
       label="Сохранить"
       class="save-btn"
       fluid
-      @click="save"
       :disabled="isShiftSaved || profitForDay === 0"
+      @click="save"
     />
+    <Button label="Сбросить" class="save-btn" fluid @click="resetAllData" />
   </div>
 </template>

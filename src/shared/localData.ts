@@ -1,12 +1,10 @@
 import { useLocalStorage } from '@vueuse/core'
 
 import { computed } from 'vue'
-import { today } from './utils'
+import { isInPeriod, today } from './utils'
 
-type Company = '2 колеса' | 'Альянс' | 'Бриг' | 'Звезда' | undefined
-
-interface Shift {
-  date: Date | null
+export interface Shift {
+  date: Date
   orders: number
   hours: number
   tips: number
@@ -14,21 +12,21 @@ interface Shift {
   profit: number
 }
 
-export const companies: Company[] = ['2 колеса', 'Альянс', 'Бриг', 'Звезда']
-
 export const settings = useLocalStorage('settings', {
   isOpen: false,
   isOpenFeeds: false,
+  isOpenStatistic: false,
   isBicycle: false,
   isLastWeekHours: false,
   isExtraWeatherMoney: false,
   isExtraDay: false,
-  company: '',
+  isRentVehicle: false,
+  company: undefined,
   userId: '',
 })
 
 export const shift: Shift = {
-  date: null,
+  date: today,
   orders: 0,
   hours: 0,
   tips: 0,
@@ -37,11 +35,22 @@ export const shift: Shift = {
 }
 
 export const shifts = useLocalStorage<Shift[]>('shifts', [])
-export const profitForPeriod = computed(() =>
-  shifts.value.reduce((acc, curr) => {
-    return (acc += curr.profit)
-  }, 0)
+
+export const shiftsTotal = computed(() =>
+  shifts.value.reduce(
+    (acc, curr) => {
+      if (!isInPeriod(curr.date)) return acc
+      acc.hours += curr.hours
+      acc.profit += curr.profit
+      acc.tips += curr.tips
+      acc.orders += curr.orders
+
+      return acc
+    },
+    { hours: 0, orders: 0, profit: 0, tips: 0 } as Shift
+  )
 )
+
 export const isShiftSaved = computed(() =>
   shifts.value.some((item) => {
     if (item.date)

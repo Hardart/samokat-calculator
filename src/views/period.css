@@ -1,0 +1,55 @@
+.period-modal {
+  position: relative;
+}
+
+.period {
+  padding: 20px;
+  background-color: var(--vt-c-divider-light-2);
+  font-size: 0.725rem;
+  border-radius: 4px;
+}
+
+.period + .period {
+  margin-top: 20px;
+}
+
+.period__weekday {
+  font-size: 0.875rem;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+.period__weekday::first-letter {
+  text-transform: uppercase;
+}
+
+.period__weather {
+  color: red;
+  font-style: italic;
+  font-weight: 600;
+}
+.period__weather--on {
+  color: green;
+  font-weight: 600;
+}
+
+.periiod__profit-value {
+  font-weight: 600;
+}
+
+.period-list {
+  position: relative;
+  max-height: 300px;
+  overflow: hidden;
+  overflow-y: auto;
+}
+
+.period-total {
+  position: relative;
+  padding: 20px;
+  font-size: 0.875rem;
+}
+.period-total__title {
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+  font-weight: 800;
+}

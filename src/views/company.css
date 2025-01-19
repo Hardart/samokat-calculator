@@ -1,0 +1,24 @@
+.company-conditions {
+  --p-metergroup-gap: 5px;
+  margin-block: 20px;
+  padding: 10px;
+  font-size: 0.875rem;
+  background-color: var(--vt-c-divider-light-2);
+}
+.company-conditions__discount {
+  margin-bottom: 5px;
+}
+.company-conditions__free-rental {
+  margin-bottom: 15px;
+}
+.company-conditions__rental {
+  margin-top: 20px;
+}
+
+.free-hours {
+  font-weight: 700;
+}
+
+.p-metergroup {
+  font-size: 0.725rem;
+}

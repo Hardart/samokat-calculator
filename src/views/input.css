@@ -58,3 +58,13 @@
     outline-color var(--p-inputnumber-transition-duration);
   z-index: 2;
 }
+
+.input-table {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.input-table__label {
+  flex-grow: 1;
+}
