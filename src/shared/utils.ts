@@ -31,9 +31,7 @@ function getHoursDeclension(number: number, word: string) {
   const endings = ['а', 'ов']
 
   if (lastTwoDigits >= 11 && lastTwoDigits <= 14) return `${word}${endings[1]}` // Исключение для чисел 11–14
-
   if (lastDigit === 1) return `${word}` // Например, 1 час
-
   if (lastDigit >= 2 && lastDigit <= 4) return `${word}${endings[0]}` // Например, 2, 3, 4 часа
 
   return `${word}${endings[1]}` // Например, 0, 5, 6 часов
@@ -66,6 +64,5 @@ const weekRange = getWeekRange(0)
 
 export const isInPeriod = (date: Date) => {
   const toDate = new Date(date)
-
   return toDate >= weekRange.startDate && toDate <= weekRange.endDate
 }
