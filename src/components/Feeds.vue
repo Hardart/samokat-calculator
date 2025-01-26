@@ -33,7 +33,7 @@ import HdInput from './HdInput.vue'
         id="nightOrders"
       />
     </div>
-    <div class="feeds input-group input-group--horisontal gap-l mt-l">
+    <div class="input-group input-group--horisontal gap-l mt-xl">
       <div class="input-group input-group--horisontal gap-s">
         <Checkbox
           v-model="settings.isExtraWeatherMoney"

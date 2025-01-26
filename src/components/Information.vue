@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import { Button } from 'primevue'
-import { settings, shifts } from '@/shared/localData'
-import { formattedDate } from '@/shared/utils'
+import { settings } from '@/shared/localData'
 import { hoursData } from '@/shared/hoursData'
 import { ordersData } from '@/shared/ordersData'
+import { formattedDate } from '@/shared/date'
 
 const ratingForDay = computed(() => {
   const rating = ordersData.value.orders / hoursData.value.hours
@@ -20,7 +20,7 @@ const ratingForDay = computed(() => {
       <h3>{{ formattedDate() }}</h3>
     </div>
 
-    <div class="statistic-btn" v-if="shifts.length">
+    <div class="statistic-btn">
       <Button
         icon="pi pi-chart-bar"
         severity="secondary"
