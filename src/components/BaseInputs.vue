@@ -11,6 +11,7 @@ import { hoursData } from '@/shared/hoursData'
         v-model.number="hoursData.hours"
         label="Количество часов"
         id="hours"
+        :max="100"
       />
     </div>
     <div class="input-group mt-s">
