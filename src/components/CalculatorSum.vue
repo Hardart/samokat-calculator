@@ -1,44 +1,65 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
 import { v4 as uuid } from 'uuid'
 import { Button } from 'primevue'
-import { today } from '@/shared/utils'
-import { hoursData, hoursSum } from '@/shared/hoursData'
-import { ordersData, ordersSum } from '@/shared/ordersData'
-import { settings, shift, shifts } from '@/shared/localData'
-import { isShiftSaved } from '@/shared/localData'
-import { resetAllData } from '@/shared/generalData'
 
-const profitForDay = computed(
-  () => hoursSum.value + ordersSum.value + ordersData.value.tips
-)
+import { settings } from '@/shared/localData'
+import { resetAllData } from '@/shared/generalData'
+import {
+  cancelEditShift,
+  editShift,
+  isEditShift,
+  isShiftSaved,
+  profitForDay,
+  saveShift,
+  shiftToEdit,
+} from '@/shared/shiftData'
+import { formattedIntlDate } from '@/shared/date'
+
 if (!settings.value.userId) settings.value.userId = uuid()
 
-const save = () => {
-  shift.date = today
-  shift.orders = ordersData.value.orders
-  shift.hours = hoursData.value.hours
-  shift.tips = ordersData.value.tips
-  shift.isWeather = settings.value.isExtraWeatherMoney
-  shift.profit = profitForDay.value
-  shifts.value.push(shift)
-
-  resetAllData()
-}
+const formattedDate = () =>
+  formattedIntlDate(shiftToEdit!.date, { day: '2-digit', month: 'long' })
 </script>
 
 <template>
   <div class="sum">
-    <p class="sum__title">Заработал сегодня</p>
+    <p class="sum__title">
+      Заработал
+      {{ isEditShift ? formattedDate() : 'сегодня' }}
+    </p>
     <h3 class="sum__value">{{ profitForDay }} ₽</h3>
 
     <Button
-      label="Сохранить"
+      label="Изменить"
+      class="save-btn"
+      fluid
+      v-if="isEditShift"
+      @click="editShift"
+    />
+    <Button
+      :label="isShiftSaved ? 'Данные за этот день сохранены' : 'Сохранить'"
       class="save-btn"
       fluid
       :disabled="isShiftSaved || profitForDay === 0"
-      @click="save"
+      v-else
+      @click="saveShift"
     />
-    <Button label="Сбросить" class="save-btn" fluid @click="resetAllData" />
+
+    <Button
+      label="Сбросить"
+      class="save-btn"
+      fluid
+      @click="resetAllData"
+      v-if="!isEditShift"
+      severity="warn"
+    />
+    <Button
+      label="Отменить изменеия"
+      class="save-btn"
+      fluid
+      severity="danger"
+      @click="cancelEditShift"
+      v-else
+    />
   </div>
 </template>
