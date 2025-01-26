@@ -72,8 +72,12 @@ input {
   margin-top: 15px;
 }
 
-.feeds {
-  margin-top: 15px;
+.mt-l {
+  margin-top: 25px;
+}
+
+.mt-xl {
+  margin-top: 35px;
 }
 
 .feed-day {
@@ -87,6 +91,7 @@ input {
 }
 
 .sum {
+  display: grid;
   margin-top: 40px;
   justify-self: end;
   align-items: center;

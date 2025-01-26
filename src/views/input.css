@@ -15,6 +15,7 @@
     outline-color var(--p-inputtext-transition-duration),
     box-shadow var(--p-inputtext-transition-duration);
   appearance: none;
+  -webkit-appearance: none;
   outline-color: transparent;
   box-shadow: var(--p-inputtext-shadow);
   order: 2;

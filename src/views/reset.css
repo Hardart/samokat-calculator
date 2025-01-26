@@ -2,3 +2,7 @@ ul {
   padding: 0;
   list-style: none;
 }
+
+.p-dialog-header--custom {
+  gap: 30px;
+}

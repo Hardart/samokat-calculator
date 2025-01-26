@@ -1,16 +1,43 @@
+.p-dialog.p-dialog {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+.p-dialog-header.p-dialog-header {
+  padding-top: 10px;
+  padding-bottom: 5px;
+}
+
+.p-dialog-content {
+  overflow: 'hidden';
+}
+
 .period-modal {
   position: relative;
 }
 
+.period-range {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-inline: 20px;
+  padding-bottom: 10px;
+  font-size: 0.725rem;
+}
+
+.period-empty {
+  text-align: center;
+  font-weight: 600;
+  margin-top: 10px;
+}
+
 .period {
+  position: relative;
   padding: 20px;
   background-color: var(--vt-c-divider-light-2);
   font-size: 0.725rem;
   border-radius: 4px;
-}
-
-.period + .period {
-  margin-top: 20px;
 }
 
 .period__weekday {
@@ -37,19 +64,58 @@
 }
 
 .period-list {
+  display: grid;
+  row-gap: 15px;
   position: relative;
-  max-height: 300px;
+  max-height: 320px;
   overflow: hidden;
   overflow-y: auto;
 }
 
 .period-total {
-  position: relative;
-  padding: 20px;
+  bottom: 0;
+  padding-inline: 20px;
+  padding-block: 10px;
   font-size: 0.875rem;
 }
+
 .period-total__title {
   margin-bottom: 10px;
   font-size: 1.2rem;
   font-weight: 800;
+}
+
+.period-controls {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  right: 10px;
+  top: 10px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .p-dialog.p-dialog {
+    color: white;
+    background: rgba(0, 0, 0, 0.108);
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --vt-c-divider-light-2: rgba(175, 175, 175, 0.12);
+  }
+  .inputnumber-button {
+    --p-inputnumber-button-color: hsl(180, 1%, 40%);
+    --p-inputnumber-button-border-color: hsl(180, 1%, 65%);
+  }
+  .inputtext {
+    --p-inputtext-background: hsla(0, 0%, 100%, 0.1);
+    --p-inputtext-border-color: hsl(180, 1%, 65%);
+  }
+}
+
+:root {
+  --vt-c-divider-light-2: rgba(175, 175, 175, 0.12);
+  --p-inputnumber-button-color: rgb(95, 101, 110);
 }
