@@ -1,28 +1,4 @@
-const DATE_OPTIONS: Intl.DateTimeFormatOptions = {
-  weekday: 'long',
-  day: 'numeric',
-  month: 'numeric',
-  year: 'numeric',
-}
-
-const SMALL_OPTIONS: Intl.DateTimeFormatOptions = {
-  day: 'numeric',
-  weekday: 'long',
-  month: 'long',
-}
-
-export const today = new Date()
-export const dayId = today.getDay()
-export const formattedDate = (isSmallOptions?: boolean, date?: Date) =>
-  Intl.DateTimeFormat(
-    'ru-RU',
-    isSmallOptions ? SMALL_OPTIONS : DATE_OPTIONS
-  ).format(date ?? today)
-
-export const formattedWeekday = (date?: Date) =>
-  Intl.DateTimeFormat('ru-RU', {
-    weekday: 'long',
-  }).format(date ?? today)
+import { computed, ref } from 'vue'
 
 function getHoursDeclension(number: number, word: string) {
   const absNumber = Math.abs(number) // На случай, если число отрицательное
@@ -47,7 +23,8 @@ export function formatOrders(number: number) {
 
 function getWeekRange(weekShift: number = 0) {
   const now = new Date()
-  const setDate = now.getDate() - now.getDay() + 1 - weekShift * 7
+  const day = now.getDay() === 0 ? 7 : now.getDay()
+  const setDate = now.getDate() - day + 1 - weekShift * 7
 
   const startOfWeek = new Date(now.setDate(setDate)) // Понедельник
   const endOfWeek = new Date(now.setDate(startOfWeek.getDate() + 6)) // Воскресенье
@@ -60,9 +37,14 @@ function getWeekRange(weekShift: number = 0) {
   }
 }
 
-const weekRange = getWeekRange(0)
+export const shiftWeekRange = ref(0)
+export const isShowNextWeekRange = computed(() => shiftWeekRange.value <= 0)
 
-export const isInPeriod = (date: Date) => {
+export const weekRange = computed(() => getWeekRange(shiftWeekRange.value))
+
+export const isInPeriod = (date: Date | string) => {
   const toDate = new Date(date)
-  return toDate >= weekRange.startDate && toDate <= weekRange.endDate
+  return (
+    toDate >= weekRange.value.startDate && toDate <= weekRange.value.endDate
+  )
 }
