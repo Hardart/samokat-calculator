@@ -1,26 +1,11 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
 import { Button, Checkbox, Dialog, Select } from 'primevue'
 import { settings, isShowLastWeekHours } from '@/shared/localData'
-import { hoursData, singleHourPrice } from '@/shared/hoursData'
+import { singleHourPrice } from '@/shared/hoursData'
 import { companyData } from '@/shared/companyData'
 import CompanyConditions from './CompanyConditions.vue'
 
-const { companyNames, myCompany } = companyData()
-const costForVehicle = computed(() =>
-  settings.value.isBicycle
-    ? hoursData.value.BICYCLE_HOUR_PRICE
-    : hoursData.value.SCOOTER_HOUR_PRICE
-)
-
-const company = computed(() => myCompany(settings.value.company))
-const meterItem = [
-  {
-    label: 'Отработал',
-    value: 10,
-    color: 'darkcyan',
-  },
-]
+const { companyNames, company } = companyData()
 </script>
 
 <template>
@@ -52,7 +37,8 @@ const meterItem = [
         binary
       />
     </div>
-    <div class="input-table">
+
+    <div class="input-table" v-if="company?.isRent">
       <label for="is-rent-vehicle" class="input-table__label">
         <span v-if="settings.isBicycle">Велосипед</span>
         <span v-else>Электросамокат</span> в аренду
@@ -64,9 +50,14 @@ const meterItem = [
         binary
       />
     </div>
-    <CompanyConditions />
+    <CompanyConditions v-if="company?.isRent" />
+    <p v-else class="rent-information">
+      Компания
+      <span class="rent-information__company">{{ company?.name }}</span> не
+      предоставляет транспорт в аренду
+    </p>
 
-    <div class="feeds">
+    <div class="mt-l">
       Я езжу на
       <Button
         :label="settings.isBicycle ? 'велосипеде' : 'электросамокате'"
@@ -78,3 +69,18 @@ const meterItem = [
     </div>
   </Dialog>
 </template>
+
+<style>
+.rent-information {
+  margin-top: 10px;
+  padding: 10px;
+  font-size: 0.875rem;
+  text-align: center;
+  background-color: var(--vt-c-divider-light-2);
+  border-radius: 8px;
+}
+
+.rent-information__company {
+  font-weight: 800;
+}
+</style>

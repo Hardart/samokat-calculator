@@ -1,13 +1,13 @@
 <script lang="ts" setup>
 import { MeterGroup } from 'primevue'
 import { formatHours } from '@/shared/utils'
-import { settings, shiftsTotal } from '@/shared/localData'
+import { settings } from '@/shared/localData'
 import { companyData } from '@/shared/companyData'
 import { computed } from 'vue'
+import { shiftsTotal } from '@/shared/shiftData'
 
-const { myCompany, companies } = companyData()
+const { company } = companyData()
 
-const company = computed(() => myCompany(settings.value.company))
 const meterItem = [
   {
     label: 'Отработал',

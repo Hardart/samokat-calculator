@@ -1,7 +1,7 @@
-import { useLocalStorage } from '@vueuse/core'
 import { computed } from 'vue'
+import { settings } from './localData'
 
-export type CompanyName = '2 колеса' | 'Альянс' | 'Бриг' | 'Звезда'
+export type CompanyName = '2 колеса' | 'Альянс' | 'Бриг' | 'Звезда' | 'Изи'
 
 interface Company {
   name: CompanyName
@@ -13,7 +13,7 @@ interface Company {
 }
 
 export const companyData = () => {
-  const companies = useLocalStorage<Company[]>('companies', [
+  const companies: Company[] = [
     {
       name: '2 колеса',
       isRent: true,
@@ -30,28 +30,36 @@ export const companyData = () => {
       oursForDiscountRent: 60,
       oursForFreeRent: 75,
     },
+    // {
+    //   name: 'Бриг',
+    //   isRent: true,
+    //   rentalCost: 3600,
+    //   discountCost: 2500,
+    //   oursForDiscountRent: 30,
+    //   oursForFreeRent: 60,
+    // },
+    // {
+    //   name: 'Звезда',
+    //   isRent: true,
+    //   rentalCost: 3600,
+    //   discountCost: 2500,
+    //   oursForDiscountRent: 30,
+    //   oursForFreeRent: 60,
+    // },
     {
-      name: 'Бриг',
-      isRent: true,
-      rentalCost: 3600,
-      discountCost: 2500,
-      oursForDiscountRent: 30,
-      oursForFreeRent: 60,
+      name: 'Изи',
+      isRent: false,
+      rentalCost: 0,
+      discountCost: 0,
+      oursForDiscountRent: 0,
+      oursForFreeRent: 0,
     },
-    {
-      name: 'Звезда',
-      isRent: true,
-      rentalCost: 3600,
-      discountCost: 2500,
-      oursForDiscountRent: 30,
-      oursForFreeRent: 60,
-    },
-  ])
-  const companyNames = computed(() =>
-    companies.value.map((company) => company.name)
-  )
-  const myCompany = (companyName?: CompanyName) =>
-    companies.value.find((company) => company.name === companyName)
+  ]
+  const companyNames = computed(() => companies.map((company) => company.name))
 
-  return { companies, companyNames, myCompany }
+  const company = computed(() =>
+    companies.find((company) => company.name === settings.value.company)
+  )
+
+  return { companies, companyNames, company }
 }
