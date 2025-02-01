@@ -8,8 +8,11 @@ interface Company {
   isRent: boolean
   rentalCost: number
   discountCost: number
-  oursForDiscountRent: number
-  oursForFreeRent: number
+  hoursForDiscountRent: number
+  hoursForFreeRent: number
+  hoursForLastWeekBonus?: number
+  isLastWeekBonus: boolean
+  hourBonus: number
 }
 
 export const companyData = () => {
@@ -19,40 +22,32 @@ export const companyData = () => {
       isRent: true,
       rentalCost: 2375,
       discountCost: 1188,
-      oursForDiscountRent: 60,
-      oursForFreeRent: 71,
+      hoursForDiscountRent: 60,
+      hoursForFreeRent: 71,
+      hourBonus: 5,
+      hoursForLastWeekBonus: 30,
+      isLastWeekBonus: true,
     },
     {
       name: 'Альянс',
       isRent: true,
       rentalCost: 3600,
       discountCost: 2500,
-      oursForDiscountRent: 60,
-      oursForFreeRent: 75,
+      hoursForDiscountRent: 60,
+      hoursForFreeRent: 75,
+      hourBonus: 0,
+      hoursForLastWeekBonus: 50,
+      isLastWeekBonus: true,
     },
-    // {
-    //   name: 'Бриг',
-    //   isRent: true,
-    //   rentalCost: 3600,
-    //   discountCost: 2500,
-    //   oursForDiscountRent: 30,
-    //   oursForFreeRent: 60,
-    // },
-    // {
-    //   name: 'Звезда',
-    //   isRent: true,
-    //   rentalCost: 3600,
-    //   discountCost: 2500,
-    //   oursForDiscountRent: 30,
-    //   oursForFreeRent: 60,
-    // },
     {
       name: 'Изи',
       isRent: false,
       rentalCost: 0,
       discountCost: 0,
-      oursForDiscountRent: 0,
-      oursForFreeRent: 0,
+      hoursForDiscountRent: 0,
+      hoursForFreeRent: 0,
+      hourBonus: 0,
+      isLastWeekBonus: false,
     },
   ]
   const companyNames = computed(() => companies.map((company) => company.name))
