@@ -15,3 +15,4 @@ export const resetAllData = () => {
 }
 
 export const firstInit = useLocalStorage('init', false) // TODO: must show first information for new user
+export const payInfo = useLocalStorage('payInfo', false) // TODO: must show first information for new user

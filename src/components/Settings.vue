@@ -26,9 +26,10 @@ const { companyNames, company } = companyData()
         placeholder="выбери компанию"
       />
     </div>
-    <div class="input-table" v-if="isShowLastWeekHours">
+    <div class="input-table" v-if="company?.isLastWeekBonus">
       <label for="last-week-hours" class="input-table__label"
-        >Отработал 30ч на прошлой неделе +10₽ в час</label
+        >Отработал {{ company.hoursForLastWeekBonus }}ч на прошлой неделе +10₽ в
+        час</label
       >
       <Checkbox
         v-model="settings.isLastWeekHours"

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import HdInput from '@/components/HdInput.vue'
 import { ordersData } from '@/shared/ordersData'
-import { hoursData } from '@/shared/hoursData'
+import { EXTRA_MONEY_PER_HOUR } from '@/shared/hoursData'
 import { settings } from '@/shared/localData'
 
 import {
@@ -42,9 +42,7 @@ import {
 
           <p v-if="settings.isExtraDay" class="feed-day">
             Действует прибавка к часу:
-            <span class="feed-day__price">
-              {{ hoursData.EXTRA_MONEY_PER_HOUR }}₽
-            </span>
+            <span class="feed-day__price"> {{ EXTRA_MONEY_PER_HOUR }}₽ </span>
             к часу
           </p>
         </AccordionContent>

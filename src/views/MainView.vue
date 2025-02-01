@@ -6,6 +6,7 @@ import Information from '@/components/Information.vue'
 import CalculatorSum from '@/components/CalculatorSum.vue'
 import Feeds from '@/components/Feeds.vue'
 import Statistic from '@/components/Statistic.vue'
+import Initiation from '@/components/Initiation.vue'
 </script>
 
 <template>
@@ -18,6 +19,7 @@ import Statistic from '@/components/Statistic.vue'
   <Settings />
   <Statistic />
   <InputNumber class="hidden" />
+  <Initiation />
 </template>
 
 <style src="./styles.css" />
