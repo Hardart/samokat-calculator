@@ -18,12 +18,12 @@ const meterItem = [
 
 const isDiscountDone = computed(() =>
   company.value
-    ? company.value.oursForDiscountRent <= shiftsTotal.value.hours
+    ? company.value.hoursForDiscountRent <= shiftsTotal.value.hours
     : false
 )
 const isFreeRentalDone = computed(() =>
   company.value
-    ? company.value.oursForFreeRent == shiftsTotal.value.hours
+    ? company.value.hoursForFreeRent == shiftsTotal.value.hours
     : false
 )
 
@@ -42,15 +42,17 @@ const rentalCost = computed(() => {
       :class="{ linethrough: isDiscountDone }"
     >
       <span class="free-hours">
-        {{ formatHours(company.oursForDiscountRent) }}
+        {{ formatHours(company.hoursForDiscountRent) }}
       </span>
       для скидки на аренду
     </div>
     <div class="company-conditions__free-rental">
-      <span class="free-hours">{{ formatHours(company.oursForFreeRent) }}</span>
+      <span class="free-hours">{{
+        formatHours(company.hoursForFreeRent)
+      }}</span>
       для бесплатной аренды
     </div>
-    <MeterGroup :value="meterItem" :max="company?.oursForFreeRent">
+    <MeterGroup :value="meterItem" :max="company?.hoursForFreeRent">
       <template #label="{ value }">
         <div v-for="item in value">
           {{ item.label }} - {{ formatHours(item.value) }}
