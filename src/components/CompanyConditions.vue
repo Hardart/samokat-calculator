@@ -1,12 +1,15 @@
 <script lang="ts" setup>
 import { MeterGroup } from 'primevue'
 import { formatHours } from '@/shared/utils'
-import { settings } from '@/shared/localData'
+
 import { companyData } from '@/shared/companyData'
 import { computed } from 'vue'
 import { shiftsTotal } from '@/shared/shiftData'
+import type { Company } from '@/shared/schemas/company-schema'
 
-const { company } = companyData()
+const { company } = defineProps<{
+  company: Company
+}>()
 
 const meterItem = [
   {
@@ -17,26 +20,22 @@ const meterItem = [
 ]
 
 const isDiscountDone = computed(() =>
-  company.value
-    ? company.value.hoursForDiscountRent <= shiftsTotal.value.hours
-    : false
+  company ? company.hoursForDiscountRent <= shiftsTotal.value.hours : false
 )
 const isFreeRentalDone = computed(() =>
-  company.value
-    ? company.value.hoursForFreeRent == shiftsTotal.value.hours
-    : false
+  company ? company.hoursForFreeRent == shiftsTotal.value.hours : false
 )
 
 const rentalCost = computed(() => {
-  if (!company.value) return undefined
-  if (isDiscountDone.value) return company.value.discountCost
+  if (!company) return undefined
+  if (isDiscountDone.value) return company.discountCost
   if (isFreeRentalDone.value) return 0
-  return company.value.rentalCost
+  return company.rentalCost
 })
 </script>
 
 <template>
-  <div class="company-conditions" v-if="company && settings.isRentVehicle">
+  <div class="company-conditions">
     <div
       class="company-conditions__discount"
       :class="{ linethrough: isDiscountDone }"

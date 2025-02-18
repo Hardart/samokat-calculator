@@ -1,7 +1,10 @@
 <script lang="ts" setup>
 import { Checkbox, Dialog } from 'primevue'
 import { settings } from '@/shared/localData'
-import { ordersData } from '@/shared/ordersData'
+import { useShiftStore } from '@/store/useShiftStore'
+import { storeToRefs } from 'pinia'
+const shiftStore = useShiftStore()
+const { baseData } = storeToRefs(shiftStore)
 import HdInput from './HdInput.vue'
 </script>
 
@@ -14,21 +17,21 @@ import HdInput from './HdInput.vue'
   >
     <div class="input-group">
       <HdInput
-        v-model="ordersData.morningOrders"
+        v-model="baseData.morningOrders"
         label="Утренние заказы (7:00-9:00)"
         id="morning"
       />
     </div>
     <div class="input-group mt-m">
       <HdInput
-        v-model="ordersData.eveningOrders"
+        v-model="baseData.eveningOrders"
         label="Вечерние заказы (18:00-23:00)"
         id="eveningOrders"
       />
     </div>
     <div class="input-group mt-m">
       <HdInput
-        v-model="ordersData.nightOrders"
+        v-model="baseData.nightOrders"
         label="Ночные заказы (23:00-01:00)"
         id="nightOrders"
       />

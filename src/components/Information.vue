@@ -5,13 +5,23 @@ import { settings } from '@/shared/localData'
 import { hoursData } from '@/shared/hoursData'
 import { ordersData } from '@/shared/ordersData'
 import { formattedDate } from '@/shared/date'
+import { useSettingsStore } from '@/store/useSettingStore'
+import { storeToRefs } from 'pinia'
+import { useCourierStore } from '@/store/useCourierStore'
+
+const settingsStore = useSettingsStore()
+const { localSettings } = storeToRefs(settingsStore)
+
+function isRatingExist(rating: unknown): boolean {
+  return Number.isNaN(rating) || !Number.isFinite(rating) || !rating
+}
 
 const ratingForDay = computed(() => {
   const rating = ordersData.value.orders / hoursData.value.hours
-  return Number.isNaN(rating) || !Number.isFinite(rating) || !rating
-    ? 0
-    : Number(rating).toFixed(2)
+  return isRatingExist(rating) ? 0 : Number(rating).toFixed(2)
 })
+
+defineProps<{ isLogin: boolean }>()
 </script>
 
 <template>
@@ -20,7 +30,7 @@ const ratingForDay = computed(() => {
       <h3>{{ formattedDate() }}</h3>
     </div>
 
-    <div class="statistic-btn">
+    <div class="statistic-btn" v-if="isLogin">
       <Button
         icon="pi pi-chart-bar"
         severity="secondary"
@@ -39,7 +49,7 @@ const ratingForDay = computed(() => {
       <Button
         icon="pi pi-cog"
         severity="secondary"
-        @click="settings.isOpen = true"
+        @click="localSettings.isSettingsOpen = true"
         aria-label="settings"
       />
     </div>

@@ -11,6 +11,8 @@ import {
   showMissedDates,
 } from '@/shared/shiftData'
 import { formattedDate } from '@/shared/date'
+
+defineProps<{ isLogin: boolean }>()
 </script>
 
 <template>

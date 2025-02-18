@@ -2,7 +2,19 @@ import { useLocalStorage } from '@vueuse/core'
 
 import { computed } from 'vue'
 
-export const settings = useLocalStorage('settings', {
+export interface ISettings {
+  isOpen: boolean
+  isOpenFeeds: boolean
+  isOpenStatistic: boolean
+  isBicycle: boolean
+  isLastWeekHours: boolean
+  isExtraWeatherMoney: boolean
+  isExtraDay: boolean
+  isRentVehicle: boolean
+  company: string | undefined
+}
+
+export const settings = useLocalStorage<ISettings>('settings', {
   isOpen: false,
   isOpenFeeds: false,
   isOpenStatistic: false,
@@ -12,7 +24,6 @@ export const settings = useLocalStorage('settings', {
   isExtraDay: false,
   isRentVehicle: false,
   company: undefined,
-  userId: '',
 })
 
 export const isShowLastWeekHours = computed(() => {

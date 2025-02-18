@@ -11,14 +11,20 @@
     "type-check": "vue-tsc --build"
   },
   "dependencies": {
+    "@primevue/forms": "^4.2.5",
     "@primevue/themes": "^4.2.5",
+    "@types/lodash": "^4.17.15",
     "@vueuse/core": "^12.3.0",
+    "defu": "^6.1.4",
+    "lodash": "^4.17.21",
+    "ofetch": "^1.4.1",
     "pinia": "^2.3.0",
     "primeicons": "^7.0.0",
     "primevue": "^4.2.5",
     "uuid": "^11.0.5",
     "vue": "^3.5.13",
-    "vue-router": "^4.5.0"
+    "vue-router": "^4.5.0",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@tsconfig/node22": "^22.0.0",

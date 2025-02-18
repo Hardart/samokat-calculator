@@ -1,73 +1,108 @@
 <script lang="ts" setup>
+import type { Company } from '@/shared/schemas/company-schema'
+import type { GlobalSettings } from '@/shared/schemas/settings-schema'
+import { computed } from 'vue'
 import { Button, Checkbox, Dialog, Select } from 'primevue'
-import { settings, isShowLastWeekHours } from '@/shared/localData'
-import { singleHourPrice } from '@/shared/hoursData'
-import { companyData } from '@/shared/companyData'
 import CompanyConditions from './CompanyConditions.vue'
 
-const { companyNames, company } = companyData()
+const isSettingsOpen = defineModel<boolean>({ required: true })
+const company = defineModel<Company>('company', { required: true })
+
+const { settings } = defineProps<{
+  settings: GlobalSettings
+  companies: Company[] | undefined
+  hourPrice: number
+  isLogin: boolean
+}>()
+
+const isUseScooter = computed(() => company.value.isWorkOnScooter)
+
+const hourBasePrice = computed(() => {
+  const { baseHourScooterPrice, baseHourBicyclePrice } = settings
+  let price = isUseScooter.value ? baseHourScooterPrice : baseHourBicyclePrice
+  if (company.value.isLastWeekBonus) price += company.value.lastWeekBonus
+  return price
+})
 </script>
 
 <template>
   <Dialog
-    v-model:visible="settings.isOpen"
-    modal
-    header="Настройки"
+    v-model:visible="isSettingsOpen"
     :style="{ width: '25rem' }"
+    header="Настройки"
+    modal
   >
     <div
       class="input-group input-group--horisontal input-group--align-center gap-m"
     >
       Я работаю в компании
       <Select
-        class="input-group"
-        v-model="settings.company"
-        :options="companyNames"
+        v-model="company"
         placeholder="выбери компанию"
+        class="input-group"
+        :options="companies"
+        optionLabel="name"
       />
     </div>
-    <div class="input-table" v-if="company?.isLastWeekBonus">
-      <label for="last-week-hours" class="input-table__label"
-        >Отработал {{ company.hoursForLastWeekBonus }}ч на прошлой неделе +10₽ в
-        час</label
-      >
+    {{ company.name }}
+    <div class="input-table" v-if="company.hasLastWeekBonus">
+      <label for="last-week-hours" class="input-table__label">
+        Отработал {{ company.hoursForLastWeekBonus }}ч на прошлой неделе +10₽ в
+        час
+      </label>
       <Checkbox
-        v-model="settings.isLastWeekHours"
+        v-model="company.isLastWeekBonus"
         inputId="last-week-hours"
         name="last-week-hours"
         binary
       />
     </div>
 
-    <div class="input-table" v-if="company?.isRent">
+    <div class="input-table" v-if="company.hasRent">
       <label for="is-rent-vehicle" class="input-table__label">
-        <span v-if="settings.isBicycle">Велосипед</span>
-        <span v-else>Электросамокат</span> в аренду
+        <span v-if="company.isWorkOnScooter"> Электросамокат</span>
+        <span v-else>Велосипед</span> в аренду
       </label>
       <Checkbox
-        v-model="settings.isRentVehicle"
+        v-model="company.isVehicleInRent"
         inputId="is-rent-vehicle"
         name="is-rent-vehicle"
         binary
       />
     </div>
-    <CompanyConditions v-if="company?.isRent" />
-    <p v-else class="rent-information">
+    <CompanyConditions :company v-if="company.isVehicleInRent" />
+
+    <p v-else-if="company.name && !company.hasRent" class="rent-information">
       Компания
-      <span class="rent-information__company">{{ company?.name }}</span> не
+      <span class="rent-information__company">{{ company.name }}</span> не
       предоставляет транспорт в аренду
     </p>
 
     <div class="mt-l">
       Я езжу на
       <Button
-        :label="settings.isBicycle ? 'велосипеде' : 'электросамокате'"
+        :label="company.isWorkOnScooter ? 'электросамокате' : 'велосипеде'"
         size="small"
         severity="secondary"
-        @click="settings.isBicycle = !settings.isBicycle"
+        @click="company.isWorkOnScooter = !company.isWorkOnScooter"
       />
-      за {{ singleHourPrice }}₽ в час
+      за {{ hourBasePrice }}₽ в час
     </div>
+    <Button
+      v-if="!isLogin"
+      label="создать учетную запись курьера"
+      severity="contrast"
+      size="small"
+      fluid
+    />
+    <Button
+      v-if="!isLogin"
+      label="уже есть учетка, войти"
+      severity="success"
+      size="small"
+      fluid
+      @click="$router.push({ name: 'login' })"
+    />
   </Dialog>
 </template>
 
