@@ -1,16 +1,14 @@
 <script lang="ts" setup>
 import router from '@/router'
 import { payInfo } from '@/shared/generalData'
-import { hoursData } from '@/shared/hoursData'
-import { ordersData } from '@/shared/ordersData'
 import { Button, Toast } from 'primevue'
 import { useToast } from 'primevue/usetoast'
 const toast = useToast()
 
 const showSticky = () => {
-  if (payInfo.value) return
+  if (!payInfo.value) return
   toast.add({
-    severity: 'warn',
+    severity: 'info',
     group: 'bc',
     closable: false,
   })
@@ -18,20 +16,18 @@ const showSticky = () => {
 
 const clear = () => {
   toast.removeAllGroups()
-  hoursData.value = null
-  ordersData.value = null
-  payInfo.value = true
+  payInfo.value = false
   router.push('/')
 }
 
-// setTimeout(showSticky, 200)
+setTimeout(showSticky, 200)
 </script>
 
 <template>
   <Toast position="bottom-center" group="bc">
     <template #message="{ message }">
-      <h3 class="toast-message">Информация о доходах изменилась</h3>
-      <Button label="Обновить" @click="clear" severity="warn" fluid />
+      <h3 class="toast-message">Обновилась информация об оплате</h3>
+      <Button label="Обновить" @click="clear" severity="info" fluid />
     </template>
   </Toast>
 </template>
