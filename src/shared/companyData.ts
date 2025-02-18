@@ -12,7 +12,7 @@ interface Company {
   hoursForFreeRent: number
   hoursForLastWeekBonus?: number
   isLastWeekBonus: boolean
-  hourBonus: number
+  lastWeekBonusCost: number
 }
 
 export const companyData = () => {
@@ -24,9 +24,9 @@ export const companyData = () => {
       discountCost: 1188,
       hoursForDiscountRent: 60,
       hoursForFreeRent: 71,
-      hourBonus: 5,
       hoursForLastWeekBonus: 30,
       isLastWeekBonus: true,
+      lastWeekBonusCost: 5,
     },
     {
       name: 'Альянс',
@@ -35,9 +35,9 @@ export const companyData = () => {
       discountCost: 2500,
       hoursForDiscountRent: 60,
       hoursForFreeRent: 75,
-      hourBonus: 0,
       hoursForLastWeekBonus: 50,
-      isLastWeekBonus: true,
+      isLastWeekBonus: false,
+      lastWeekBonusCost: 0,
     },
     {
       name: 'Изи',
@@ -46,8 +46,8 @@ export const companyData = () => {
       discountCost: 0,
       hoursForDiscountRent: 0,
       hoursForFreeRent: 0,
-      hourBonus: 0,
       isLastWeekBonus: false,
+      lastWeekBonusCost: 0,
     },
   ]
   const companyNames = computed(() => companies.map((company) => company.name))

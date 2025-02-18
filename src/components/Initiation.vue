@@ -24,7 +24,7 @@ const clear = () => {
   router.push('/')
 }
 
-setTimeout(showSticky, 200)
+// setTimeout(showSticky, 200)
 </script>
 
 <template>
