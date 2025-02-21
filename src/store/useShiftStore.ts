@@ -1,89 +1,75 @@
-import type { Courier, CourierLoginForm } from '@/shared/schemas/courier-schema'
-import { courierAPI } from '@/api/courier-api'
+type PartOfDay = 'morning' | 'evening' | 'night'
 
-import { computed, reactive, ref } from 'vue'
+import { computed } from 'vue'
 import { defineStore, storeToRefs } from 'pinia'
-import { shiftSchema } from '@/shared/schemas/shift-schema'
-import { useCourierStore } from './useCourierStore'
-import { useGlobalSettingsStore } from './useSettingStore'
-import { useLocalStorage } from '@vueuse/core'
+import { useSettingsStore } from './useSettingStore'
+import { useCompanyStore } from './useCompanyStore'
 
 export const useShiftStore = defineStore('shift', () => {
-  const courierStore = useCourierStore()
-  const globalStore = useGlobalSettingsStore()
-  const { courier, isRideOnScooter } = storeToRefs(courierStore)
-  const { settings: globalSettings } = storeToRefs(globalStore)
+  const settingsStore = useSettingsStore()
+  const companyStore = useCompanyStore()
 
-  const settings = computed(() =>
-    courier.value ? courier.value.settings : globalSettings.value
-  )
+  const { settings, storageSettings } = storeToRefs(settingsStore)
+  const { company } = storeToRefs(companyStore)
 
-  const baseData = useLocalStorage('baseData', {
-    hours: 0,
-    orders: 0,
-    tips: 0,
-    morningOrders: 0,
-    eveningOrders: 0,
-    nightOrders: 0,
+  const singleOrderCost = computed(() => {
+    let orderCost = settings.value.orderCost
+    if (storageSettings.value.isWeatherSurcharge) {
+      orderCost += settings.value.badWeatherSurcharge
+    }
+    return orderCost
   })
 
-  const _isOverOrders = (someOrders: number) =>
-    someOrders <= baseData.value.orders
+  const singleHourPrice = computed(() => {
+    let price = settings.value.hourCost
+    price += _addExtraDaySurcharge()
+    price += _lastWeekBonusSurcharge()
+    return price
+  })
 
   const ordersSum = computed(() => {
-    if (!settings.value) return 0
-    let sum = baseData.value.orders * settings.value?.baseOrderPrice
+    let sum = storageSettings.value.orders * singleOrderCost.value
 
-    if (baseData.value.morningOrders > 0) {
-      sum +=
-        settings.value.morningBonus *
-        (_isOverOrders(baseData.value.morningOrders)
-          ? baseData.value.morningOrders
-          : baseData.value.orders)
-    }
-
-    if (baseData.value.eveningOrders > 0) {
-      sum +=
-        settings.value.eveningBonus *
-        (_isOverOrders(baseData.value.eveningOrders)
-          ? baseData.value.eveningOrders
-          : baseData.value.orders)
-    }
-
-    if (baseData.value.nightOrders > 0) {
-      sum +=
-        settings.value.nightBonus *
-        (_isOverOrders(baseData.value.nightOrders)
-          ? baseData.value.nightOrders
-          : baseData.value.orders)
-    }
-
-    if (settings.value.isWeatherBonus) {
-      sum += baseData.value.orders * settings.value.weatherBonus
-    }
+    const partsOfDay: PartOfDay[] = ['morning', 'evening', 'night']
+    partsOfDay.forEach((part) => {
+      sum += _partsOfDaySum(part)
+    })
 
     return sum
   })
 
-  const hoursSum = computed(() => baseData.value.hours * singleHourPrice.value)
-
-  const singleHourPrice = computed(() => {
-    if (!settings.value) return 0
-    let price = isRideOnScooter.value
-      ? settings.value.baseHourScooterPrice
-      : settings.value.baseHourBicyclePrice
-    if (settings.value.isExtraDay) price += settings.value.extraDayBonus
-    if (courier.value && courier.value.company.isLastWeekBonus)
-      price += courier.value.company.lastWeekBonus
-
-    return price
-  })
-
-  const profitForDay = computed(
-    () => hoursSum.value + ordersSum.value + baseData.value.tips
+  const hoursSum = computed(
+    () => storageSettings.value.hours * singleHourPrice.value
   )
 
-  const totalSum = computed(() => {})
+  const profitForDay = computed(() => {
+    return hoursSum.value + ordersSum.value + storageSettings.value.tips
+  })
 
-  return { profitForDay, baseData }
+  function _lastWeekBonusSurcharge() {
+    if (!company.value || !storageSettings.value.isLastWeekHours) return 0
+    return company.value.lastWeekBonusCost
+  }
+
+  function _addExtraDaySurcharge() {
+    if (!storageSettings.value.isExtraDay) return 0
+    return settings.value.extraDaySurcharge
+  }
+
+  function _isOverOrders(someOrders: number) {
+    return someOrders <= storageSettings.value.orders
+  }
+
+  function _partsOfDaySum(partOfDay: PartOfDay) {
+    if (!storageSettings.value[`${partOfDay}Orders`]) return 0
+
+    return (
+      settings.value[`${partOfDay}Surcharge`] *
+      (_isOverOrders(storageSettings.value[`${partOfDay}Orders`])
+        ? storageSettings.value[`${partOfDay}Orders`]
+        : storageSettings.value.orders)
+    )
+  }
+
+  return { profitForDay, storageSettings, singleHourPrice, singleOrderCost }
 })

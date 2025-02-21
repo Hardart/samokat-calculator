@@ -1,13 +1,17 @@
 import type { Courier, CourierLoginForm } from '@/shared/schemas/courier-schema'
 import { courierAPI } from '@/api/courier-api'
-import { computed, reactive, ref, type Ref } from 'vue'
+import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { useSettingsStore } from './useSettingStore'
 import { cloneDeep, isEqual } from 'lodash'
 import { settingsAPI } from '@/api/settings-api'
 import { settingsSchema, type Settings } from '@/shared/schemas/settings-schema'
 import { companySchema, type Company } from '@/shared/schemas/company-schema'
+import { useCompanyStore } from './useCompanyStore'
 export const useCourierStore = defineStore('courier', () => {
+  const settingsStore = useSettingsStore()
+  const companyStore = useCompanyStore()
+
   const courier = ref<Courier | null>()
   const courierSettingsTemplate = ref<Settings>(settingsSchema._output)
   const courierCompanyTemplate = ref<Company>(companySchema._output)
@@ -31,7 +35,10 @@ export const useCourierStore = defineStore('courier', () => {
 
   async function fetchCourier(loginData: CourierLoginForm) {
     courier.value = await courierAPI.findOne(loginData)
+
     if (!courier.value) return null
+    settingsStore.settings = courier.value.settings
+    companyStore.company = courier.value.company
     _initCourier(courier.value)
     return courier.value
   }
@@ -39,6 +46,8 @@ export const useCourierStore = defineStore('courier', () => {
   async function autoLogin() {
     courier.value = await courierAPI.autoLogin()
     if (!courier.value) return null
+    settingsStore.settings = courier.value.settings
+    companyStore.company = courier.value.company
     _initCourier(courier.value)
     return
   }
@@ -46,7 +55,10 @@ export const useCourierStore = defineStore('courier', () => {
   async function logout() {
     if (!courier.value) return
     const res = await courierAPI.logout(courier.value.id)
-    if (res) courier.value = null
+    if (res) {
+      courier.value = null
+      settingsStore.setDefaultSettings()
+    }
     return
   }
 

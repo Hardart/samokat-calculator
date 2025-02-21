@@ -9,4 +9,12 @@ export const companiesAPI = {
 
     return data.value
   },
+
+  async getById(id: string) {
+    const { data } = await useHdFetch<ResponseApi.CompanyData.Single>(
+      '/companies/' + id
+    )
+
+    return data.value
+  },
 }

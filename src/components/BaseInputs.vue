@@ -1,16 +1,17 @@
 <script lang="ts" setup>
-import HdInput from '@/components/HdInput.vue'
-import { useShiftStore } from '@/store/useShiftStore'
 import { storeToRefs } from 'pinia'
-const shiftStore = useShiftStore()
-const { baseData } = storeToRefs(shiftStore)
+import HdInput from '@/components/HdInput.vue'
+import { useSettingsStore } from '@/store/useSettingStore'
+
+const settingsStore = useSettingsStore()
+const { storageSettings } = storeToRefs(settingsStore)
 </script>
 
 <template>
   <div>
     <div class="input-group">
       <HdInput
-        v-model.number="baseData.hours"
+        v-model.number="storageSettings.hours"
         label="Количество часов"
         id="hours"
         :max="100"
@@ -18,7 +19,7 @@ const { baseData } = storeToRefs(shiftStore)
     </div>
     <div class="input-group mt-s">
       <HdInput
-        v-model.number="baseData.orders"
+        v-model.number="storageSettings.orders"
         label="Количество заказов"
         id="orders"
       />
@@ -26,7 +27,7 @@ const { baseData } = storeToRefs(shiftStore)
     <div class="input-group mt-s">
       <HdInput
         showButtons
-        v-model.number="baseData.tips"
+        v-model.number="storageSettings.tips"
         label="Чаевые"
         id="tips"
       />

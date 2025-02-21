@@ -13,8 +13,7 @@ export const settingsSchema = z.object({
   id: z.string().optional(),
   orderCost: z.number(),
   isDefault: z.boolean().optional(),
-  electricScooterCostPerHour: z.number(),
-  bicycleCostPerHour: z.number(),
+  hourCost: z.number(),
   morningSurcharge: z.number(),
   eveningSurcharge: z.number(),
   nightSurcharge: z.number(),
@@ -23,7 +22,6 @@ export const settingsSchema = z.object({
   extraDays: z.array(z.enum(ExtraDay)),
   transportType: z.enum(['scooter', 'bycicle']),
   isRentingTransport: z.boolean(),
-
   __v: z.number().optional(),
 })
 
