@@ -23,7 +23,7 @@ export const courierAPI = {
     )
     return data.value
   },
-  async registration(body: CourierForm) {
+  async registration(body: Courier) {
     const { data } = await useHdFetch<ResponseApi.CourierData.Single>(
       `/couriers/create`,
       { method: 'POST', body }

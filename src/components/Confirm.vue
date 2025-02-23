@@ -10,6 +10,8 @@ defineEmits(['confirm', 'cancel'])
     position="bottom"
     :closable="false"
     content-class="confirm-dialog"
+    modal
+    maximizable
   >
     <Button
       label="Отменить"

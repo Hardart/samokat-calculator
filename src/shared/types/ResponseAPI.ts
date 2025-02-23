@@ -1,6 +1,7 @@
 import type { Company } from '../schemas/company-schema'
 import type { Courier } from '../schemas/courier-schema'
-import type { GlobalSettings } from '../schemas/settings-schema'
+import type { Settings } from '../schemas/settings-schema'
+import type { Shift } from '../schemas/shift-schema'
 
 export interface CustomFetchOptions {
   url: string
@@ -27,7 +28,7 @@ export interface CompanyListItem {
 
 export declare namespace ResponseApi {
   namespace Settings {
-    type Global = GlobalSettings
+    type Global = Settings
   }
 
   namespace CourierData {
@@ -38,5 +39,10 @@ export declare namespace ResponseApi {
   namespace CompanyData {
     type List = Company[]
     type Single = Company
+  }
+
+  namespace ShiftData {
+    type List = Shift[]
+    type Single = Shift
   }
 }

@@ -3,44 +3,48 @@ import { companySchema } from './company-schema'
 import { settingsSchema } from './settings-schema'
 
 export const courierSchema = z.object({
-  id: z.string(),
+  id: z.string().optional(),
   name: z.string(),
   phone: z.string(),
   company: companySchema,
   settings: settingsSchema,
+  password: z
+    .string()
+    .trim()
+    .min(7, { message: 'Пароль должен быть минимум 7 знаков' })
+    .optional(),
   role: z.enum(['creator', 'admin', 'user']),
 })
 
 export const courierFormSchema = z.object({
   phone: z
-    .string({ required_error: 'Обязательное поле' })
+    .string()
     .trim()
     .startsWith('8', 'Номер должен начинаться с 8')
     .min(11, { message: 'Введите полный номер телефона' })
     .max(11, { message: 'Номер не должен быть больше 11 цифр' }),
   name: z
-    .string({ required_error: 'Обязательное поле' })
+    .string()
     .trim()
-    .min(2, { message: 'Имя должно быть больше 2 знаков' })
+    .min(3, { message: 'Имя должно быть больше 3 знаков' })
     .max(25, { message: 'Слишком длинное имя' }),
 
-  companyId: z.string({ required_error: 'Обязательное поле' }).trim(),
   role: z.enum(['creator', 'admin', 'user']).default('user'),
   password: z
-    .string({ required_error: 'Обязательное поле' })
+    .string({ message: 'Обязательное поле' })
     .trim()
     .min(7, { message: 'Пароль должен быть минимум 7 знаков' }),
 })
 
 export const courierLoginFormSchema = z.object({
   phone: z
-    .string({ required_error: 'Обязательное поле' })
+    .string()
     .trim()
     .startsWith('8', 'Номер должен начинаться с 8')
     .min(11, { message: 'Введите полный номер телефона' })
     .max(11, { message: 'Номер не должен быть больше 11 цифр' }),
   password: z
-    .string({ required_error: 'Обязательное поле' })
+    .string({ message: 'Обязательное поле' })
     .trim()
     .min(7, { message: 'Пароль должен быть минимум 7 знаков' }),
 })

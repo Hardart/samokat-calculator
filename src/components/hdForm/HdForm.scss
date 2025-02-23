@@ -1,0 +1,28 @@
+.hd-form {
+  display: flex;
+  flex-direction: column;
+  margin-inline: auto;
+  gap: 15px;
+  width: 100%;
+  max-width: 32rem;
+
+  &__panel {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  &__label {
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  &__input {
+    &--number {
+      max-width: 80px;
+    }
+  }
+}

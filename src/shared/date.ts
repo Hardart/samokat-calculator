@@ -18,6 +18,10 @@ export const formattedIntlDate = (
 
 export const today = new Date()
 
+export function isToday(date: Date | string) {
+  return new Date(date).toLocaleDateString() === today.toLocaleDateString()
+}
+
 export const dayId = today.getDay()
 
 export const dayAndMonth = (date: string | Date) => {

@@ -1,108 +1,24 @@
 <script setup lang="ts">
-import router from '@/router'
-import { Message, InputText, Button, Password, Select } from 'primevue'
-import { zodResolver } from '@primevue/forms/resolvers/zod'
-import { Form, FormField, type FormSubmitEvent } from '@primevue/forms'
-import {
-  courierFormSchema,
-  type CourierForm,
-} from '@/shared/schemas/courier-schema'
-import { useSettingsStore } from '@/store/useSettingStore'
-import { courierAPI } from '@/api/courier-api'
+import { computed, ref } from 'vue'
+import SettingsForm from '@/components/SettingsForm/SettingsForm.vue'
+import CompanyForm from '@/components/CompanyForm/CompanyForm.vue'
+import CourierForm from '@/components/CourierForm/CourierForm.vue'
 
-const resolver = zodResolver(courierFormSchema)
+const step = ref(1)
 
-const onFormSubmit = async (e: FormSubmitEvent) => {
-  if (e.valid) {
-    const courier: CourierForm = {
-      name: e.states.name.value,
-      companyId: e.states.companyId.value,
-      password: e.states.password.value,
-      phone: e.states.phone.value,
-      role: 'user',
-    }
+const stepper = [
+  { step: 1, component: CourierForm },
+  { step: 2, component: SettingsForm },
+  { step: 3, component: CompanyForm },
+]
 
-    const newCourier = await courierAPI.registration(courier)
-    if (newCourier?.id) await router.push('/')
-  }
-}
-
-const baseStore = useSettingsStore()
+const activeStep = computed(() =>
+  stepper.find((item) => item.step === step.value)
+)
 </script>
 
 <template>
-  <div>
-    <Form :resolver @submit="onFormSubmit" class="login-form">
-      <FormField v-slot="$field" as="section" name="phone">
-        <InputText
-          type="text"
-          inputmode="numeric"
-          placeholder="Телефон"
-          class="login-form__input"
-        />
-        <Message
-          v-if="$field?.invalid"
-          severity="error"
-          variant="simple"
-          size="small"
-        >
-          {{ $field.error?.message }}
-        </Message>
-      </FormField>
-
-      <FormField v-slot="$field" as="section" name="name">
-        <InputText type="text" placeholder="Имя" class="login-form__input" />
-        <Message
-          v-if="$field?.invalid"
-          severity="error"
-          variant="simple"
-          size="small"
-        >
-          {{ $field.error?.message }}
-        </Message>
-      </FormField>
-      <FormField v-slot="$field" asChild name="password">
-        <section>
-          <Select
-            name="companyId"
-            :options="baseStore.companies"
-            optionLabel="name"
-            option-value="id"
-            placeholder="Выберите компанию"
-            fluid
-          />
-          <Message
-            v-if="$field?.invalid"
-            severity="error"
-            size="small"
-            variant="simple"
-            >{{ $field.error?.message }}</Message
-          >
-        </section>
-      </FormField>
-      <FormField v-slot="$field" asChild name="password">
-        <section>
-          <Password
-            placeholder="Пароль"
-            :feedback="false"
-            toggleMask
-            type="text"
-            fluid
-            input-class="login-form__input"
-          />
-          <Message
-            v-if="$field?.invalid"
-            variant="simple"
-            severity="error"
-            size="small"
-          >
-            {{ $field.error?.message }}
-          </Message>
-        </section>
-      </FormField>
-      <Button type="submit" severity="secondary" label="Создать учётку" />
-    </Form>
-  </div>
+  <component :is="activeStep?.component" v-model="step" />
 </template>
 
 <style>
@@ -128,3 +44,76 @@ const baseStore = useSettingsStore()
   display: flex;
 }
 </style>
+
+<!-- <div>
+  <Form :resolver @submit="onFormSubmit" class="login-form">
+    <FormField v-slot="$field" as="section" name="phone">
+      <InputText
+        type="text"
+        inputmode="numeric"
+        placeholder="Телефон"
+        class="login-form__input"
+      />
+      <Message
+        v-if="$field?.invalid"
+        severity="error"
+        variant="simple"
+        size="small"
+      >
+        {{ $field.error?.message }}
+      </Message>
+    </FormField>
+
+    <FormField v-slot="$field" as="section" name="name">
+      <InputText type="text" placeholder="Имя" class="login-form__input" />
+      <Message
+        v-if="$field?.invalid"
+        severity="error"
+        variant="simple"
+        size="small"
+      >
+        {{ $field.error?.message }}
+      </Message>
+    </FormField>
+    <FormField v-slot="$field" asChild name="password">
+      <section>
+        <Select
+          name="companyId"
+          :options="baseStore.companies"
+          optionLabel="name"
+          option-value="id"
+          placeholder="Выберите компанию"
+          fluid
+        />
+        <Message
+          v-if="$field?.invalid"
+          severity="error"
+          size="small"
+          variant="simple"
+          >{{ $field.error?.message }}</Message
+        >
+      </section>
+    </FormField>
+    <FormField v-slot="$field" asChild name="password">
+      <section>
+        <Password
+          placeholder="Пароль"
+          :feedback="false"
+          toggleMask
+          type="text"
+          fluid
+          input-class="login-form__input"
+        />
+        <Message
+          v-if="$field?.invalid"
+          variant="simple"
+          severity="error"
+          size="small"
+        >
+          {{ $field.error?.message }}
+        </Message>
+      </section>
+    </FormField>
+    <Button type="submit" severity="secondary" label="Создать учётку" />
+  </Form>
+</div> -->

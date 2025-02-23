@@ -1,0 +1,17 @@
+.shift-item {
+  position: relative;
+  padding: 20px;
+  background-color: var(--vt-c-divider-light-2);
+  font-size: 0.725rem;
+  border-radius: 4px;
+
+  &__weekday {
+    margin-bottom: 5px;
+    font-size: 0.875rem;
+    font-weight: 700;
+  }
+
+  &__cost-value {
+    font-weight: 700;
+  }
+}

@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import router from '@/router'
-import { Message, InputText, Button, Password, Select } from 'primevue'
+import { Message, InputText, Button, Password } from 'primevue'
 import { zodResolver } from '@primevue/forms/resolvers/zod'
 import { Form, FormField, type FormSubmitEvent } from '@primevue/forms'
 import {
-  courierFormSchema,
+  courierSchema,
   type CourierLoginForm,
 } from '@/shared/schemas/courier-schema'
 import { useSettingsStore } from '@/store/useSettingStore'
 import { useCourierStore } from '@/store/useCourierStore'
 
-const resolver = zodResolver(courierFormSchema)
+const resolver = zodResolver(courierSchema)
 
 const onFormSubmit = async (e: FormSubmitEvent) => {
   if (e.valid) {

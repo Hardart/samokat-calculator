@@ -22,25 +22,22 @@
   border-radius: 0;
 }
 
-.custom-input {
-  position: relative;
-  display: inline-flex;
-}
+.inputbutton {
+  &-start {
+    order: 1;
+    border: 1px solid var(--p-inputnumber-button-border-color);
+    border-start-start-radius: var(--p-inputnumber-button-border-radius);
+    border-end-start-radius: var(--p-inputnumber-button-border-radius);
+    border-inline-end: 0 none;
+  }
 
-.inputbutton-start {
-  order: 1;
-  border: 1px solid var(--p-inputnumber-button-border-color);
-  border-start-start-radius: var(--p-inputnumber-button-border-radius);
-  border-end-start-radius: var(--p-inputnumber-button-border-radius);
-  border-inline-end: 0 none;
-}
-
-.inputbutton-end {
-  order: 3;
-  border: 1px solid var(--p-inputnumber-button-border-color);
-  border-start-end-radius: var(--p-inputnumber-button-border-radius);
-  border-end-end-radius: var(--p-inputnumber-button-border-radius);
-  border-inline-start: 0 none;
+  &-end {
+    order: 3;
+    border: 1px solid var(--p-inputnumber-button-border-color);
+    border-start-end-radius: var(--p-inputnumber-button-border-radius);
+    border-end-end-radius: var(--p-inputnumber-button-border-radius);
+    border-inline-start: 0 none;
+  }
 }
 
 .inputnumber-button {
@@ -64,8 +61,18 @@
   display: flex;
   align-items: center;
   margin-top: 10px;
+
+  &__label {
+    flex-grow: 1;
+  }
 }
 
-.input-table__label {
-  flex-grow: 1;
+.custom-input {
+  position: relative;
+  display: inline-flex;
+
+  & input {
+    max-width: 100px;
+    text-align: center;
+  }
 }

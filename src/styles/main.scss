@@ -1,4 +1,9 @@
-@import './base.css';
+@use 'root';
+@use 'reset';
+@use 'styles';
+@use 'input';
+@use 'company';
+@use 'period';
 
 #app {
   max-width: 1280px;

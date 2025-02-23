@@ -11,7 +11,7 @@ const ExtraDay = [
 
 export const settingsSchema = z.object({
   id: z.string().optional(),
-  orderCost: z.number(),
+  orderCost: z.number().min(10),
   isDefault: z.boolean().optional(),
   hourCost: z.number(),
   morningSurcharge: z.number(),

@@ -11,12 +11,12 @@ export const shiftSchema = z.object({
   id: z.string().optional(),
   date: z.date(),
   workHours: z.number(),
-  morningOrders: z.number(),
-  eveningOrders: z.number(),
-  nightOrders: z.number(),
   tips: z.number(),
   orders: ordersSchema,
+  orderCost: z.number(),
+  hourCost: z.number(),
   totalEarnings: z.number(),
+  courier: z.string(),
 })
 
 export type Shift = z.output<typeof shiftSchema>

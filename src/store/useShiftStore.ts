@@ -1,35 +1,62 @@
 type PartOfDay = 'morning' | 'evening' | 'night'
 
-import { computed } from 'vue'
-import { defineStore, storeToRefs } from 'pinia'
-import { useSettingsStore } from './useSettingStore'
+import { computed, ref } from 'vue'
+import { defineStore } from 'pinia'
 import { useCompanyStore } from './useCompanyStore'
+import { useSettingsStore } from './useSettingStore'
+import type { Shift } from '@/shared/schemas/shift-schema'
+import { cloneDeep } from 'lodash'
+import { shiftAPI } from '@/api/shift-api'
+import { useCourierStore } from './useCourierStore'
+import { isToday } from '@/shared/date'
 
 export const useShiftStore = defineStore('shift', () => {
   const settingsStore = useSettingsStore()
   const companyStore = useCompanyStore()
+  const courierStore = useCourierStore()
 
-  const { settings, storageSettings } = storeToRefs(settingsStore)
-  const { company } = storeToRefs(companyStore)
+  const shiftTemplate: Shift = {
+    date: new Date(),
+    hourCost: 0,
+    orderCost: 0,
+    orders: {
+      morning: 0,
+      evening: 0,
+      night: 0,
+      total: 0,
+    },
+    tips: 0,
+    workHours: 0,
+    totalEarnings: 0,
+    courier: '',
+  }
+
+  const loadingShifts = ref(false)
+
+  const shift = ref<Shift>(cloneDeep(shiftTemplate))
+  const shifts = ref<Shift[]>()
+
+  const isShiftSaved = computed(() =>
+    shifts.value?.some((shift) => isToday(shift.date))
+  )
 
   const singleOrderCost = computed(() => {
-    let orderCost = settings.value.orderCost
-    if (storageSettings.value.isWeatherSurcharge) {
-      orderCost += settings.value.badWeatherSurcharge
+    let orderCost = settingsStore.settings.orderCost
+    if (settingsStore.storageSettings.isWeatherSurcharge) {
+      orderCost += settingsStore.settings.badWeatherSurcharge
     }
     return orderCost
   })
 
   const singleHourPrice = computed(() => {
-    let price = settings.value.hourCost
+    let price = settingsStore.settings.hourCost
     price += _addExtraDaySurcharge()
     price += _lastWeekBonusSurcharge()
     return price
   })
 
   const ordersSum = computed(() => {
-    let sum = storageSettings.value.orders * singleOrderCost.value
-
+    let sum = settingsStore.storageSettings.orders * singleOrderCost.value
     const partsOfDay: PartOfDay[] = ['morning', 'evening', 'night']
     partsOfDay.forEach((part) => {
       sum += _partsOfDaySum(part)
@@ -39,37 +66,114 @@ export const useShiftStore = defineStore('shift', () => {
   })
 
   const hoursSum = computed(
-    () => storageSettings.value.hours * singleHourPrice.value
+    () => settingsStore.storageSettings.hours * singleHourPrice.value
   )
 
-  const profitForDay = computed(() => {
-    return hoursSum.value + ordersSum.value + storageSettings.value.tips
-  })
+  const profitForDay = computed(
+    () => hoursSum.value + ordersSum.value + settingsStore.storageSettings.tips
+  )
+
+  const lastWeekBonusLabel = computed(
+    () => `Отработал ${companyStore.company.hoursForLastWeekBonus}ч. прошлой
+                неделе?`
+  )
+
+  const extraDaysLabel = computed(
+    () => `Сегодня ${settingsStore.settings.extraDays.join(' или ')}?`
+  )
+
+  async function saveShift() {
+    _setShiftDataFromStorage()
+    const data = await shiftAPI.saveShift(shift.value)
+    if (!data) return
+    _resetShift()
+  }
+
+  async function getShiftsForWeek(week: number = 0) {
+    if (!courierStore.isLogin) return
+    loadingShifts.value = true
+    const query = _getWeekRange(week)
+    const data = await shiftAPI.getShiftsForWeek(
+      courierStore.courier.id!,
+      query
+    )
+    loadingShifts.value = false
+    if (!data) return
+    shifts.value = data
+  }
+
+  function _resetShift() {
+    shift.value = cloneDeep(shiftTemplate)
+  }
+
+  function _setShiftDataFromStorage() {
+    if (!courierStore.isLogin) return
+    const { storageSettings } = settingsStore
+    shift.value.hourCost = singleHourPrice.value
+    shift.value.orderCost = singleOrderCost.value
+    shift.value.tips = storageSettings.tips
+    shift.value.orders.morning = storageSettings.morningOrders
+    shift.value.orders.evening = storageSettings.eveningOrders
+    shift.value.orders.night = storageSettings.nightOrders
+    shift.value.orders.total = storageSettings.orders
+    shift.value.workHours = storageSettings.hours
+    shift.value.totalEarnings = profitForDay.value
+    shift.value.courier = courierStore.courier.id!
+  }
 
   function _lastWeekBonusSurcharge() {
-    if (!company.value || !storageSettings.value.isLastWeekHours) return 0
-    return company.value.lastWeekBonusCost
+    if (!companyStore.company || !settingsStore.storageSettings.isLastWeekHours)
+      return 0
+    return companyStore.company.lastWeekBonusCost
   }
 
   function _addExtraDaySurcharge() {
-    if (!storageSettings.value.isExtraDay) return 0
-    return settings.value.extraDaySurcharge
+    if (!settingsStore.storageSettings.isExtraDay) return 0
+    return settingsStore.settings.extraDaySurcharge
   }
 
   function _isOverOrders(someOrders: number) {
-    return someOrders <= storageSettings.value.orders
+    return someOrders <= settingsStore.storageSettings.orders
   }
 
   function _partsOfDaySum(partOfDay: PartOfDay) {
-    if (!storageSettings.value[`${partOfDay}Orders`]) return 0
+    if (!settingsStore.storageSettings[`${partOfDay}Orders`]) return 0
 
     return (
-      settings.value[`${partOfDay}Surcharge`] *
-      (_isOverOrders(storageSettings.value[`${partOfDay}Orders`])
-        ? storageSettings.value[`${partOfDay}Orders`]
-        : storageSettings.value.orders)
+      settingsStore.settings[`${partOfDay}Surcharge`] *
+      (_isOverOrders(settingsStore.storageSettings[`${partOfDay}Orders`])
+        ? settingsStore.storageSettings[`${partOfDay}Orders`]
+        : settingsStore.storageSettings.orders)
     )
   }
 
-  return { profitForDay, storageSettings, singleHourPrice, singleOrderCost }
+  function _getWeekRange(weekShift: number = 0) {
+    const now = new Date()
+    const day = now.getDay() === 0 ? 7 : now.getDay()
+    const setDate = now.getDate() - day + 1 - weekShift * 7
+
+    const startOfWeek = new Date(now.setDate(setDate)) // Понедельник
+    const endOfWeek = new Date(now.setDate(startOfWeek.getDate() + 6)) // Воскресенье
+    startOfWeek.setHours(0, 0, 0)
+    endOfWeek.setHours(23, 59, 59)
+
+    return {
+      startDate: startOfWeek.toISOString(),
+      endDate: endOfWeek.toISOString(),
+    }
+  }
+
+  return {
+    shift,
+    shifts,
+    profitForDay,
+    singleHourPrice,
+    singleOrderCost,
+    lastWeekBonusLabel,
+    extraDaysLabel,
+    isShiftSaved,
+    loadingShifts,
+    saveShift,
+    getShiftsForWeek,
+  }
 })

@@ -1,4 +1,5 @@
-import './assets/main.css'
+import 'primeicons/primeicons.css'
+import '@/styles/main.scss'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
@@ -9,9 +10,11 @@ import PrimeVue from 'primevue/config'
 import Aura from '@primevue/themes/aura'
 import ToastService from 'primevue/toastservice'
 import { useCourierStore } from '@/store/useCourierStore'
+import KeyFilter from 'primevue/keyfilter'
 
 const app = createApp(App)
 const pinia = createPinia()
+app.directive('keyfilter', KeyFilter)
 app.use(PrimeVue, { theme: { preset: Aura } })
 app.use(ToastService)
 app.use(router)

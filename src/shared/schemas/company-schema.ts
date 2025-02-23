@@ -4,7 +4,6 @@ export type Company = z.output<typeof companySchema>
 
 export const defaultCompany = {
   name: '',
-  hasRent: false,
   hasLastWeekBonus: false,
   hoursForFreeRent: 0,
   hoursForDiscountRent: 0,
@@ -16,11 +15,10 @@ export const defaultCompany = {
 
 export const companySchema = z.object({
   id: z.string().optional(),
-  name: z.string(),
-  hasRent: z.boolean(),
+  name: z.string().trim().min(3, 'Название должно быть не меньше 3 символов'),
   hasLastWeekBonus: z.boolean(),
   lastWeekBonusCost: z.number(),
-  rentalCost: z.number(),
+  rentalCost: z.number().min(10, 'Стоимость аренды должна быть больше 10'),
   hoursForDiscountRent: z.number(),
   discountCost: z.number(),
   hoursForFreeRent: z.number(),

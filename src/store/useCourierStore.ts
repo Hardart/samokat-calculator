@@ -4,98 +4,74 @@ import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { useSettingsStore } from './useSettingStore'
 import { cloneDeep, isEqual } from 'lodash'
-import { settingsAPI } from '@/api/settings-api'
-import { settingsSchema, type Settings } from '@/shared/schemas/settings-schema'
-import { companySchema, type Company } from '@/shared/schemas/company-schema'
 import { useCompanyStore } from './useCompanyStore'
+
 export const useCourierStore = defineStore('courier', () => {
   const settingsStore = useSettingsStore()
   const companyStore = useCompanyStore()
 
-  const courier = ref<Courier | null>()
-  const courierSettingsTemplate = ref<Settings>(settingsSchema._output)
-  const courierCompanyTemplate = ref<Company>(companySchema._output)
+  const courierTemplate: Courier = {
+    name: '',
+    phone: '',
+    company: companyStore.company,
+    settings: settingsStore.settings,
+    role: 'user',
+  }
+
+  const courier = ref<Courier>(cloneDeep(courierTemplate))
 
   const isLogin = computed(() => typeof courier.value?.id === 'string')
 
-  const isRideOnScooter = computed(
-    () => courier.value?.settings.transportType === 'scooter'
-  )
-
-  const isSettingsChanged = computed(() =>
-    isEqual(courierCompanyTemplate.value, courier.value?.company)
-  )
-
-  function changeTransportType() {
-    if (!courier.value) return
-    courier.value.settings.transportType = isRideOnScooter.value
-      ? 'bycicle'
-      : 'scooter'
-  }
-
   async function fetchCourier(loginData: CourierLoginForm) {
-    courier.value = await courierAPI.findOne(loginData)
-
-    if (!courier.value) return null
+    const data = await courierAPI.findOne(loginData)
+    if (!data) return null
+    courier.value = data
     settingsStore.settings = courier.value.settings
     companyStore.company = courier.value.company
-    _initCourier(courier.value)
+    settingsStore.deleteGlobalSettings()
+    companyStore.deleteGlobalCompany()
     return courier.value
   }
 
+  async function createCourier() {
+    courier.value.company = companyStore.company
+    courier.value.settings = settingsStore.settings
+    const data = await courierAPI.registration(courier.value)
+    console.log(data)
+  }
+
   async function autoLogin() {
-    courier.value = await courierAPI.autoLogin()
-    if (!courier.value) return null
+    const data = await courierAPI.autoLogin()
+    if (!data) {
+      settingsStore.setGlobalSettings()
+      companyStore.setGlobalCompany()
+      return
+    }
+    courier.value = data
     settingsStore.settings = courier.value.settings
     companyStore.company = courier.value.company
-    _initCourier(courier.value)
+    settingsStore.deleteGlobalSettings()
+    companyStore.deleteGlobalCompany()
     return
   }
 
   async function logout() {
-    if (!courier.value) return
+    if (!courier.value?.id) return
     const res = await courierAPI.logout(courier.value.id)
     if (res) {
-      courier.value = null
-      settingsStore.setDefaultSettings()
+      courier.value = cloneDeep(courierTemplate)
+      settingsStore.setGlobalSettings()
+      companyStore.setGlobalCompany()
     }
     return
-  }
-
-  async function saveUserSettings() {
-    if (!courier.value) return
-    const id = await settingsAPI.saveSettings(courier.value)
-    _initCourier(courier.value)
-    return id
-  }
-
-  function _initCourier(courier: Courier) {
-    _setDefaultSettings(courier)
-    courierSettingsTemplate.value = cloneDeep(courier.settings)
-    courierCompanyTemplate.value = cloneDeep(courier.company)
-  }
-
-  function _setDefaultSettings(courier: Courier) {
-    if (courier.settings) return
-    const { settings } = useSettingsStore()
-
-    if (settings) {
-      const settingsCopy = cloneDeep(settings)
-      delete settingsCopy.id
-      delete settingsCopy.__v
-      courier.settings = settingsCopy
-    }
   }
 
   return {
     courier,
     isLogin,
-    isRideOnScooter,
-    isSettingsChanged,
     fetchCourier,
     autoLogin,
     logout,
-    saveUserSettings,
-    changeTransportType,
+    createCourier,
   }
 })

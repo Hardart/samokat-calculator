@@ -34,7 +34,7 @@ defineProps<{ isLogin: boolean }>()
       <Button
         icon="pi pi-chart-bar"
         severity="secondary"
-        @click="settings.isOpenStatistic = true"
+        @click="localSettings.isShiftsOpen = true"
         aria-label="statistic"
       />
     </div>
@@ -46,6 +46,7 @@ defineProps<{ isLogin: boolean }>()
         @click="settings.isOpenFeeds = true"
         aria-label="feeds"
       />
+
       <Button
         icon="pi pi-cog"
         severity="secondary"
