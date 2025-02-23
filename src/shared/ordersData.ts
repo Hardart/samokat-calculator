@@ -6,7 +6,7 @@ const EXTRA_MORNING_MONEY = 30
 const EXTRA_EVENING_MONEY = 5
 const EXTRA_NIGHT_MONEY = 70
 const EXTRA_WEATHER_MONEY = 10
-const ORDER_PRICE = 40
+const ORDER_PRICE = 35
 
 export const ordersData = useLocalStorage('orders', {
   orders: 0,

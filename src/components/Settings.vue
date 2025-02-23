@@ -52,11 +52,11 @@ const { companyNames, company } = companyData()
         binary
       />
     </div>
-    <CompanyConditions v-if="company?.isRent" />
-    <p v-else class="rent-information">
+    <CompanyConditions v-if="company && company.isRent" />
+    <p v-else-if="company && !company.isRent" class="rent-information">
       Компания
-      <span class="rent-information__company">{{ company?.name }}</span> не
-      предоставляет транспорт в аренду
+      <span class="rent-information__company">{{ company.name }}</span>
+      не предоставляет транспорт в аренду
     </p>
 
     <div class="mt-l">

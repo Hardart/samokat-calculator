@@ -12,6 +12,14 @@ const ratingForDay = computed(() => {
     ? 0
     : Number(rating).toFixed(2)
 })
+
+const ratingColor = computed(() =>
+  +ratingForDay.value < 4
+    ? 'red'
+    : +ratingForDay.value < 6
+    ? 'lightgreen'
+    : 'lightblue'
+)
 </script>
 
 <template>
@@ -44,7 +52,12 @@ const ratingForDay = computed(() => {
       />
     </div>
     <div class="rating">
-      <h3>Нагрузка: {{ ratingForDay }}</h3>
+      <h3>
+        Нагрузка:
+        <span :style="{ color: ratingColor, fontWeight: 700 }">{{
+          ratingForDay
+        }}</span>
+      </h3>
     </div>
   </div>
 </template>
