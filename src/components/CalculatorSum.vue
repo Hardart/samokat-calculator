@@ -2,9 +2,18 @@
 import { Button } from 'primevue'
 import { useShiftStore } from '@/store/useShiftStore'
 import { useSettingsStore } from '@/store/useSettingStore'
+import { computed } from 'vue'
 
 const shiftStore = useShiftStore()
 const settingsStore = useSettingsStore()
+
+const saveButtonLabel = computed(() =>
+  shiftStore.loadingShifts
+    ? 'Загрузка'
+    : shiftStore.isShiftSaved
+    ? 'Сохранено'
+    : 'Сохранить'
+)
 </script>
 
 <template>
@@ -15,7 +24,7 @@ const settingsStore = useSettingsStore()
     <Button
       fluid
       class="save-btn"
-      label="Сохранить"
+      :label="saveButtonLabel"
       @click="shiftStore.saveShift"
       :disabled="shiftStore.isShiftSaved || shiftStore.loadingShifts"
     />

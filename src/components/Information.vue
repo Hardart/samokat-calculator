@@ -1,23 +1,19 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import { Button } from 'primevue'
-import { settings } from '@/shared/localData'
-import { hoursData } from '@/shared/hoursData'
-import { ordersData } from '@/shared/ordersData'
 import { formattedDate } from '@/shared/date'
 import { useSettingsStore } from '@/store/useSettingStore'
 import { storeToRefs } from 'pinia'
-import { useCourierStore } from '@/store/useCourierStore'
 
 const settingsStore = useSettingsStore()
-const { localSettings } = storeToRefs(settingsStore)
+const { localSettings, storageSettings } = storeToRefs(settingsStore)
 
 function isRatingExist(rating: unknown): boolean {
   return Number.isNaN(rating) || !Number.isFinite(rating) || !rating
 }
 
 const ratingForDay = computed(() => {
-  const rating = ordersData.value.orders / hoursData.value.hours
+  const rating = storageSettings.value.orders / storageSettings.value.hours
   return isRatingExist(rating) ? 0 : Number(rating).toFixed(2)
 })
 
@@ -43,7 +39,7 @@ defineProps<{ isLogin: boolean }>()
       <Button
         icon="pi pi-wallet"
         severity="secondary"
-        @click="settings.isOpenFeeds = true"
+        @click="localSettings.isFeedsOpen = true"
         aria-label="feeds"
       />
 

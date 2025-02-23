@@ -34,7 +34,7 @@ export const useShiftStore = defineStore('shift', () => {
   const loadingShifts = ref(false)
 
   const shift = ref<Shift>(cloneDeep(shiftTemplate))
-  const shifts = ref<Shift[]>()
+  const shifts = ref<Shift[]>([])
 
   const isShiftSaved = computed(() =>
     shifts.value?.some((shift) => isToday(shift.date))
@@ -83,9 +83,12 @@ export const useShiftStore = defineStore('shift', () => {
   )
 
   async function saveShift() {
+    if (isShiftSaved.value) return
     _setShiftDataFromStorage()
     const data = await shiftAPI.saveShift(shift.value)
     if (!data) return
+    shifts.value.push(data)
+    settingsStore.resetStorageSettings()
     _resetShift()
   }
 

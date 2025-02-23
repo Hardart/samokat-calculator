@@ -46,6 +46,7 @@ export const useSettingsStore = defineStore('settings', () => {
   const localSettings = reactive({
     isSettingsOpen: false,
     isShiftsOpen: false,
+    isFeedsOpen: false,
   })
 
   const storageSettings = useLocalStorage('settings', cloneDeep(localTemlate))

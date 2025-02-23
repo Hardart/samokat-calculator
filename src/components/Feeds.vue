@@ -2,16 +2,16 @@
 import { Dialog } from 'primevue'
 import { storeToRefs } from 'pinia'
 import HdInput from './HdInput.vue'
-import { settings } from '@/shared/localData'
+
 import { useSettingsStore } from '@/store/useSettingStore'
 
 const settingsStore = useSettingsStore()
-const { storageSettings } = storeToRefs(settingsStore)
+const { storageSettings, localSettings } = storeToRefs(settingsStore)
 </script>
 
 <template>
   <Dialog
-    v-model:visible="settings.isOpenFeeds"
+    v-model:visible="localSettings.isFeedsOpen"
     modal
     header="Надбавки"
     :style="{ width: '25rem' }"
