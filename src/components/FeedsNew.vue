@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
 import { Dialog } from 'primevue'
 import CustomInput from './CustomInput.vue'
 import { ShiftManager } from '@/shared/ShiftManager'

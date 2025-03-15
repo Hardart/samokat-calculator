@@ -2,24 +2,42 @@
 import { computed } from 'vue'
 import { MeterGroup } from 'primevue'
 import { formatHours } from '@/shared/utils'
-import { shiftsTotal } from '@/shared/shiftData'
 import type { Company } from '@/shared/schemas/company-schema'
+import type { Shift } from '@/shared/schemas/shift-schema'
+interface ShiftsTotal {
+  orders: number
+  hours: number
+  tips: number
+  totalEarnings: number
+}
 
-const { company } = defineProps<{ company: Company }>()
+const { company, shifts } = defineProps<{ company: Company; shifts: Shift[] }>()
+const total = computed(() =>
+  shifts.reduce(
+    (acc, curr) => {
+      acc.orders += curr.orders.total
+      acc.hours += curr.workHours
+      acc.tips += curr.tips
+      acc.totalEarnings += curr.totalEarnings
 
+      return acc
+    },
+    { orders: 0, hours: 0, tips: 0, totalEarnings: 0 } as ShiftsTotal
+  )
+)
 const meterItem = [
   {
     label: 'Отработал',
-    value: shiftsTotal.value.hours,
+    value: total.value.hours,
     color: 'darkcyan',
   },
 ]
 
 const isDiscountDone = computed(() =>
-  company ? company.hoursForDiscountRent <= shiftsTotal.value.hours : false
+  company ? company.hoursForDiscountRent <= total.value.hours : false
 )
 const isFreeRentalDone = computed(() =>
-  company ? company.hoursForFreeRent == shiftsTotal.value.hours : false
+  company ? company.hoursForFreeRent == total.value.hours : false
 )
 
 const rentalCost = computed(() => {
