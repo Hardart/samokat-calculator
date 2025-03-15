@@ -1,35 +1,37 @@
 <script lang="ts" setup>
 import { ButtonGroup, Button } from 'primevue'
-import { dayAndMonth } from '@/shared/date'
-import { isShowNextWeekRange, shiftWeekRange, weekRange } from '@/shared/utils'
-import { showMissedDates } from '@/shared/shiftData'
-const increaseRange = () => {
-  shiftWeekRange.value++
-  showMissedDates.value = false
-}
-const decreaseRange = () => {
-  shiftWeekRange.value--
-  showMissedDates.value = false
-}
+import { dayAndMonth, getWeekRange } from '@/shared/date'
+import { computed } from 'vue'
+const { weekOffset } = defineProps<{
+  weekOffset: number
+}>()
+
+defineEmits(['encrease', 'decrease'])
+
+const rangeLabel = computed(() => {
+  const { startDate, endDate } = getWeekRange(weekOffset)
+  return `C ${dayAndMonth(startDate)} по ${dayAndMonth(endDate)}`
+})
 </script>
 
 <template>
   <div class="period-range">
-    C {{ dayAndMonth(weekRange.startDate) }} по
-    {{ dayAndMonth(weekRange.endDate) }}
+    <span>
+      {{ rangeLabel }}
+    </span>
+
     <div>
       <ButtonGroup>
         <Button
           size="small"
           icon="pi pi-angle-left"
-          @click="increaseRange"
+          @click="$emit('encrease', true)"
           variant="text"
         />
         <Button
           size="small"
           icon="pi pi-angle-right"
-          @click="decreaseRange"
-          :disabled="isShowNextWeekRange"
+          @click="$emit('decrease', false)"
           variant="text"
         />
       </ButtonGroup>

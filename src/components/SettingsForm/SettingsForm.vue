@@ -1,33 +1,24 @@
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
-import type { FormError } from '@/composables/useFormValidation'
+import { computed, inject, type Ref } from 'vue'
+import { MultiSelect, SelectButton, Button, Checkbox } from 'primevue'
+import HdForm from '../hdForm/HdForm.vue'
+import FormNumberInput from '../FormNumberInput/FormNumberInput.vue'
 import { settingsSchema, type Settings } from '@/shared/schemas/settings-schema'
 
-import { MultiSelect, SelectButton, Button, Checkbox, Message } from 'primevue'
-import HdForm from '../hdForm/HdForm.vue'
-import { useSettingsStore } from '@/store/useSettingStore'
-import { useCourierStore } from '@/store/useCourierStore'
-import FormNumberInput from '../FormNumberInput/FormNumberInput.vue'
-const courierStore = useCourierStore()
-const settingsStore = useSettingsStore()
+const settingsFormData = inject<Settings>('settings-form')
+if (!settingsFormData) throw Error('no courier form data')
+
 const step = defineModel<number>({ required: true })
+
 const submitButtonLabel = computed(() =>
   step.value >= 3 ? 'Зарегистрировать' : 'Далее'
 )
 
-const errorsMap = ref<Record<string, string>>()
+const emits = defineEmits(['on-finish'])
 
 const onFormSubmit = async () => {
-  errorsMap.value = {}
   step.value++
-  if (step.value >= 3) courierStore.createCourier()
-}
-
-const onFormErrors = async (errors?: FormError[]) => {
-  errorsMap.value = errors?.reduce((acc, curr) => {
-    acc[curr.path] = curr.message
-    return acc
-  }, {} as Record<string, string>)
+  if (step.value >= 3) emits('on-finish')
 }
 
 const tranportOptions = [
@@ -45,7 +36,7 @@ const extradaysOptions = [
   'воскресенье',
 ]
 const extraDaysLengthMessage = computed(
-  () => `выбрал ${settingsStore.settings.extraDays.length}`
+  () => `выбрано ${settingsFormData.extraDays.length}`
 )
 </script>
 
@@ -53,13 +44,12 @@ const extraDaysLengthMessage = computed(
   <div class="main-settings">
     <h1>Настройки</h1>
     <HdForm
-      :state="settingsStore.settings"
+      :state="settingsFormData"
       :schema="settingsSchema"
       @on-submit="onFormSubmit"
-      @on-errors="onFormErrors"
     >
       <FormNumberInput
-        v-model="settingsStore.settings.hourCost"
+        v-model="settingsFormData.hourCost"
         id="hour-cost"
         mode="currency"
         errorKey="hourCost"
@@ -67,7 +57,7 @@ const extraDaysLengthMessage = computed(
       />
 
       <FormNumberInput
-        v-model="settingsStore.settings.orderCost"
+        v-model="settingsFormData.orderCost"
         id="order-cost"
         mode="currency"
         errorKey="orderCost"
@@ -75,7 +65,7 @@ const extraDaysLengthMessage = computed(
       />
 
       <FormNumberInput
-        v-model="settingsStore.settings.morningSurcharge"
+        v-model="settingsFormData.morningSurcharge"
         id="morning-surcharge"
         errorKey="morningSurcharge"
         label="Бонус к заказу с 7:00 до 9:00"
@@ -83,7 +73,7 @@ const extraDaysLengthMessage = computed(
       />
 
       <FormNumberInput
-        v-model="settingsStore.settings.eveningSurcharge"
+        v-model="settingsFormData.eveningSurcharge"
         id="evening-surcharge"
         errorKey="eveningSurcharge"
         label="Бонус к заказу с 18:00 до 23:00"
@@ -91,7 +81,7 @@ const extraDaysLengthMessage = computed(
       />
 
       <FormNumberInput
-        v-model="settingsStore.settings.nightSurcharge"
+        v-model="settingsFormData.nightSurcharge"
         id="night-surcharge"
         errorKey="nightSurcharge"
         label="Бонус к заказу с 23:00 до 01:00"
@@ -99,7 +89,7 @@ const extraDaysLengthMessage = computed(
       />
 
       <FormNumberInput
-        v-model="settingsStore.settings.badWeatherSurcharge"
+        v-model="settingsFormData.badWeatherSurcharge"
         id="weather-surcharge"
         errorKey="badWeatherSurcharge"
         label="Бонус к заказу за плохую погоду"
@@ -111,7 +101,7 @@ const extraDaysLengthMessage = computed(
           Дни, в которые есть бонус к часу
         </label>
         <MultiSelect
-          v-model="settingsStore.settings.extraDays"
+          v-model="settingsFormData.extraDays"
           :options="extradaysOptions"
           :filter="false"
           :showToggleAll="false"
@@ -123,8 +113,8 @@ const extraDaysLengthMessage = computed(
       </div>
 
       <FormNumberInput
-        v-if="settingsStore.settings.extraDays.length"
-        v-model="settingsStore.settings.extraDaySurcharge"
+        v-if="settingsFormData.extraDays.length"
+        v-model="settingsFormData.extraDaySurcharge"
         id="exttra-day-surcharge"
         errorKey="extraDaySurcharge"
         label="Бонус к часу в выбранные дни"
@@ -135,7 +125,7 @@ const extraDaysLengthMessage = computed(
         <label class="hd-form__label"> Мой транспорт </label>
         <SelectButton
           name="selection"
-          v-model="settingsStore.settings.transportType"
+          v-model="settingsFormData.transportType"
           :options="tranportOptions"
           optionLabel="label"
           optionValue="value"
@@ -148,7 +138,7 @@ const extraDaysLengthMessage = computed(
         </label>
         <Checkbox
           inputId="is-transport-in-rent"
-          v-model="settingsStore.settings.isRentingTransport"
+          v-model="settingsFormData.isRentingTransport"
           binary
         />
       </div>

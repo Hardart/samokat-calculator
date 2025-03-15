@@ -2,7 +2,8 @@ import { z } from 'zod'
 
 export type Company = z.output<typeof companySchema>
 
-export const defaultCompany = {
+export const defaultCompany: Company = {
+  id: null,
   name: '',
   hasLastWeekBonus: false,
   hoursForFreeRent: 0,
@@ -14,7 +15,7 @@ export const defaultCompany = {
 }
 
 export const companySchema = z.object({
-  id: z.string().optional(),
+  id: z.string().nullable(),
   name: z.string().trim().min(3, 'Название должно быть не меньше 3 символов'),
   hasLastWeekBonus: z.boolean(),
   lastWeekBonusCost: z.number(),

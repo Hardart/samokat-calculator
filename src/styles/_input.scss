@@ -55,6 +55,11 @@
     border-color var(--p-inputnumber-transition-duration),
     outline-color var(--p-inputnumber-transition-duration);
   z-index: 2;
+
+  &:disabled {
+    cursor: default;
+    color: var(--color-background-mute);
+  }
 }
 
 .input-table {

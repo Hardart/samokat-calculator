@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed, inject, ref, type Ref } from 'vue'
-import { InputText, Message } from 'primevue'
+import { Password, Message } from 'primevue'
 import type { FormError } from '@/composables/useFormValidation'
 
 const modelValue = defineModel<string | null>({ required: true })
@@ -19,13 +19,15 @@ const error = computed(() => {
 <template>
   <div>
     <div class="hd-form__panel">
-      <label for="name" class="hd-form__label">{{ label }}</label>
-      <InputText
-        id="name"
+      <label :for="id" class="hd-form__label">{{ label }}</label>
+      <Password
+        :feedback="false"
+        :inputId="id"
         type="text"
         v-model="modelValue"
         size="small"
         class="hd-form__input--text"
+        fluid
       />
     </div>
     <Message v-if="error" severity="error" size="small" variant="simple">
@@ -34,4 +36,4 @@ const error = computed(() => {
   </div>
 </template>
 
-<style lang="scss" scoped src="./FormTextInput.scss" />
+<style lang="scss" scoped src="./FormPasswordInput.scss" />

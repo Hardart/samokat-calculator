@@ -10,9 +10,9 @@ const ExtraDay = [
 ] as const
 
 export const settingsSchema = z.object({
-  id: z.string().optional(),
+  id: z.string().nullable(),
+  isGlobal: z.boolean().optional(),
   orderCost: z.number().min(10),
-  isDefault: z.boolean().optional(),
   hourCost: z.number(),
   morningSurcharge: z.number(),
   eveningSurcharge: z.number(),

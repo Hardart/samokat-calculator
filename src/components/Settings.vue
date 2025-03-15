@@ -1,23 +1,21 @@
 <script lang="ts" setup>
 import { Button, Dialog } from 'primevue'
-import { useCourierStore } from '@/store/useCourierStore'
-import { useSettingsStore } from '@/store/useSettingStore'
-import SettingsGlobal from './SettingsGlobal/SettingsGlobal.vue'
 import UserSettings from './UserSettings.vue'
+import { useCourierStore } from '@/store/useCourierStore'
+import { useAppSettings } from '@/composables/useAppSettings'
 
-const settingsStore = useSettingsStore()
 const courierStore = useCourierStore()
+const { appSettings } = useAppSettings()
 </script>
 
 <template>
   <Dialog
-    v-model:visible="settingsStore.localSettings.isSettingsOpen"
+    v-model:visible="appSettings.isSettingsOpen"
     :style="{ width: '25rem' }"
     header="Настройки"
     modal
   >
-    <UserSettings v-if="courierStore.isLogin" />
-    <SettingsGlobal v-else />
+    <UserSettings />
 
     <div v-if="courierStore.isLogin">
       <Button

@@ -1,31 +1,34 @@
 <script lang="ts" setup>
+import CustomInput from './CustomInput.vue'
 import HdInput from '@/components/HdInput.vue'
-import { useSettingsStore } from '@/store/useSettingStore'
+import { ShiftManager } from '@/shared/ShiftManager'
+import { ShiftCalculator } from '@/shared/ShiftCalculator'
 
-const settingsStore = useSettingsStore()
+const currentShift = ShiftManager.getComputedShift()
 </script>
 
 <template>
   <div>
     <div class="input-group">
-      <HdInput
-        v-model.number="settingsStore.storageSettings.hours"
+      <CustomInput
         label="Количество часов"
-        id="hours"
-        :max="100"
+        :value="currentShift.hours"
+        @increase="ShiftCalculator.incrementHours"
+        @decrease="ShiftCalculator.decrementHours"
       />
     </div>
     <div class="input-group mt-s">
-      <HdInput
-        v-model.number="settingsStore.storageSettings.orders"
+      <CustomInput
         label="Количество заказов"
-        id="orders"
+        :value="currentShift.orders"
+        @increase="ShiftCalculator.incrementOrders"
+        @decrease="ShiftCalculator.decrementOrders"
       />
     </div>
     <div class="input-group mt-s">
       <HdInput
         showButtons
-        v-model.number="settingsStore.storageSettings.tips"
+        v-model.number="currentShift.tips"
         label="Чаевые"
         id="tips"
       />

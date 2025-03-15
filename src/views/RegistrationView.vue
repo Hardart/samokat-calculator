@@ -1,9 +1,15 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, provide, reactive, ref } from 'vue'
 import SettingsForm from '@/components/SettingsForm/SettingsForm.vue'
 import CompanyForm from '@/components/CompanyForm/CompanyForm.vue'
 import CourierForm from '@/components/CourierForm/CourierForm.vue'
-
+import type { Settings } from '@/shared/schemas/settings-schema'
+import type { Company } from '@/shared/schemas/company-schema'
+import { useCourierStore } from '@/store/useCourierStore'
+import type { CourierForm as CourierFormData } from '@/shared/schemas/courier-schema'
+import { useRouter } from 'vue-router'
+import { Button } from 'primevue'
+const router = useRouter()
 const step = ref(1)
 
 const stepper = [
@@ -15,10 +21,72 @@ const stepper = [
 const activeStep = computed(() =>
   stepper.find((item) => item.step === step.value)
 )
+
+const settingsForm = reactive<Settings>({
+  id: null,
+  orderCost: 0,
+  hourCost: 0,
+  badWeatherSurcharge: 0,
+  extraDays: ['понедельник', 'воскресенье'],
+  morningSurcharge: 0,
+  eveningSurcharge: 0,
+  nightSurcharge: 0,
+  extraDaySurcharge: 0,
+  isRentingTransport: false,
+  transportType: 'scooter',
+})
+
+const courierForm: CourierFormData = {
+  name: null,
+  phone: null,
+  password: null,
+  role: 'user',
+}
+
+const companyForm: Company = {
+  id: null,
+  name: '',
+  discountCost: 0,
+  rentalCost: 0,
+  lastWeekBonusCost: 0,
+  hasLastWeekBonus: false,
+  hoursForDiscountRent: 0,
+  hoursForFreeRent: 0,
+  hoursForLastWeekBonus: 0,
+}
+
+provide('courier-form', courierForm)
+provide('company-form', companyForm)
+provide('settings-form', settingsForm)
+
+const onFinish = async () => {
+  const courierStore = useCourierStore()
+  const courier = await courierStore.createCourier({
+    courierForm,
+    companyForm,
+    settingsForm,
+  })
+  if (!courier) return
+  await router.push('/')
+}
 </script>
 
 <template>
-  <component :is="activeStep?.component" v-model="step" />
+  <div class="login-form">
+    <component
+      v-if="activeStep"
+      :is="activeStep.component"
+      v-model="step"
+      @on-finish="onFinish"
+    />
+    <Button
+      type="button"
+      severity="contrast"
+      variant="link"
+      label="назад"
+      @click="$router.push('/')"
+    />
+  </div>
 </template>
 
 <style>

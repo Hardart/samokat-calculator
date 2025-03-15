@@ -1,14 +1,10 @@
 <script lang="ts" setup>
 import router from '@/router'
-import { payInfo } from '@/shared/generalData'
-import { hoursData } from '@/shared/hoursData'
-import { ordersData } from '@/shared/ordersData'
 import { Button, Toast } from 'primevue'
 import { useToast } from 'primevue/usetoast'
 const toast = useToast()
 
 const showSticky = () => {
-  if (payInfo.value) return
   toast.add({
     severity: 'warn',
     group: 'bc',
@@ -18,13 +14,10 @@ const showSticky = () => {
 
 const clear = () => {
   toast.removeAllGroups()
-  hoursData.value = null
-  ordersData.value = null
-  payInfo.value = true
   router.push('/')
 }
 
-setTimeout(showSticky, 200)
+// setTimeout(showSticky, 200)
 </script>
 
 <template>

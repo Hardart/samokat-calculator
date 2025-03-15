@@ -1,6 +1,7 @@
 import { useHdFetch } from '@/api/base-fetch/base-fetch'
 import type { Courier, CourierForm } from '@/shared/schemas/courier-schema'
 import type { ResponseApi } from '@/shared/types/ResponseAPI'
+import type { ICreatedParams } from '@/store/useCourierStore'
 
 export const courierAPI = {
   async list() {
@@ -23,12 +24,12 @@ export const courierAPI = {
     )
     return data.value
   },
-  async registration(body: Courier) {
-    const { data } = await useHdFetch<ResponseApi.CourierData.Single>(
+  async registration(body: ICreatedParams) {
+    const { data, error } = await useHdFetch<ResponseApi.CourierData.Single>(
       `/couriers/create`,
       { method: 'POST', body }
     )
-
+    if (error.value) return null
     return data.value
   },
   async autoLogin() {

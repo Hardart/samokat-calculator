@@ -1,23 +1,12 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
 import { Button } from 'primevue'
 import { formattedDate } from '@/shared/date'
-import { useSettingsStore } from '@/store/useSettingStore'
-import { storeToRefs } from 'pinia'
+import { useUser } from '@/composables/useUser'
+import { useAppSettings } from '@/composables/useAppSettings'
+import { CostCalculator } from '@/shared/CostCalculator'
 
-const settingsStore = useSettingsStore()
-const { localSettings, storageSettings } = storeToRefs(settingsStore)
-
-function isRatingExist(rating: unknown): boolean {
-  return Number.isNaN(rating) || !Number.isFinite(rating) || !rating
-}
-
-const ratingForDay = computed(() => {
-  const rating = storageSettings.value.orders / storageSettings.value.hours
-  return isRatingExist(rating) ? 0 : Number(rating).toFixed(2)
-})
-
-defineProps<{ isLogin: boolean }>()
+const { appSettings } = useAppSettings()
+const { isLogin } = useUser()
 </script>
 
 <template>
@@ -30,7 +19,7 @@ defineProps<{ isLogin: boolean }>()
       <Button
         icon="pi pi-chart-bar"
         severity="secondary"
-        @click="localSettings.isShiftsOpen = true"
+        @click="$router.push({ name: 'shifts' })"
         aria-label="statistic"
       />
     </div>
@@ -39,19 +28,19 @@ defineProps<{ isLogin: boolean }>()
       <Button
         icon="pi pi-wallet"
         severity="secondary"
-        @click="localSettings.isFeedsOpen = true"
+        @click="appSettings.isFeedsOpen = true"
         aria-label="feeds"
       />
 
       <Button
         icon="pi pi-cog"
         severity="secondary"
-        @click="localSettings.isSettingsOpen = true"
+        @click="appSettings.isSettingsOpen = true"
         aria-label="settings"
       />
     </div>
     <div class="rating">
-      <h3>Нагрузка: {{ ratingForDay }}</h3>
+      <h3>Нагрузка: {{ CostCalculator.rating }}</h3>
     </div>
   </div>
 </template>

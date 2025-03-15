@@ -4,68 +4,57 @@ import { Message, InputText, Button, Password } from 'primevue'
 import { zodResolver } from '@primevue/forms/resolvers/zod'
 import { Form, FormField, type FormSubmitEvent } from '@primevue/forms'
 import {
+  courierLoginFormSchema,
   courierSchema,
   type CourierLoginForm,
 } from '@/shared/schemas/courier-schema'
-import { useSettingsStore } from '@/store/useSettingStore'
 import { useCourierStore } from '@/store/useCourierStore'
+import { useAppSettings } from '@/composables/useAppSettings'
+import { useShiftStore } from '@/store/useShiftStore'
+import HdForm from '@/components/hdForm/HdForm.vue'
+import type { FormError } from '@/composables/useFormValidation'
+import FormTextInput from '@/components/FormTextInput/FormTextInput.vue'
+import FormPasswordInput from '@/components/FormPasswordInput/FormPasswordInput.vue'
 
-const resolver = zodResolver(courierSchema)
+const { appSettings } = useAppSettings()
+const loginForm: CourierLoginForm = {
+  phone: '',
+  password: '',
+}
 
-const onFormSubmit = async (e: FormSubmitEvent) => {
-  if (e.valid) {
-    const loginData: CourierLoginForm = {
-      phone: e.states.phone.value,
-      password: e.states.password.value,
-    }
-    const courierStore = useCourierStore()
-    const courier = await courierStore.fetchCourier(loginData)
-    const baseStore = useSettingsStore()
-    baseStore.localSettings.isSettingsOpen = false
-    if (courier?.id) await router.push('/')
+const onFormSubmit = async (e: FormError) => {
+  const shiftSrore = useShiftStore()
+  const courierStore = useCourierStore()
+  await courierStore.fetchCourier(loginForm)
+
+  appSettings.isSettingsOpen = false
+
+  if (courierStore.isLogin) {
+    await router.push('/')
+    shiftSrore.getShiftsList()
   }
 }
 </script>
 
 <template>
   <div>
-    <Form :resolver @submit="onFormSubmit" class="login-form">
-      <FormField v-slot="$field" as="section" name="phone">
-        <InputText
-          type="text"
-          inputmode="numeric"
-          placeholder="Телефон"
-          class="login-form__input"
-        />
-        <Message
-          v-if="$field?.invalid"
-          severity="error"
-          variant="simple"
-          size="small"
-        >
-          {{ $field.error?.message }}
-        </Message>
-      </FormField>
-      <FormField v-slot="$field" asChild name="password">
-        <section>
-          <Password
-            placeholder="Пароль"
-            :feedback="false"
-            toggleMask
-            type="text"
-            fluid
-            input-class="login-form__input"
-          />
-          <Message
-            v-if="$field?.invalid"
-            variant="simple"
-            severity="error"
-            size="small"
-          >
-            {{ $field.error?.message }}
-          </Message>
-        </section>
-      </FormField>
+    <HdForm
+      :schema="courierLoginFormSchema"
+      :state="loginForm"
+      @on-submit="onFormSubmit"
+    >
+      <FormTextInput
+        v-model="loginForm.phone"
+        label="Телефон"
+        id="phone"
+        error-key="phone"
+      />
+      <FormPasswordInput
+        v-model="loginForm.password"
+        label="Пароль"
+        id="password"
+        error-key="password"
+      />
       <Button type="submit" severity="secondary" label="Войти" />
       <Button
         type="button"
@@ -74,7 +63,7 @@ const onFormSubmit = async (e: FormSubmitEvent) => {
         label="назад"
         @click="$router.push('/')"
       />
-    </Form>
+    </HdForm>
   </div>
 </template>
 

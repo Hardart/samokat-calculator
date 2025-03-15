@@ -48,3 +48,7 @@ export const isInPeriod = (date: Date | string) => {
     toDate >= weekRange.value.startDate && toDate <= weekRange.value.endDate
   )
 }
+
+export function notNanOrFininte(value: unknown): boolean {
+  return Number.isNaN(value) || !Number.isFinite(value) || !value
+}

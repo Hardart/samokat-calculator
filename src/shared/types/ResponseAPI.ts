@@ -1,7 +1,7 @@
 import type { Company } from '../schemas/company-schema'
 import type { Courier } from '../schemas/courier-schema'
 import type { Settings } from '../schemas/settings-schema'
-import type { Shift } from '../schemas/shift-schema'
+import type { Shift } from '../ShiftClass'
 
 export interface CustomFetchOptions {
   url: string

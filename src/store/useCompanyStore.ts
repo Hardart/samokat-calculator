@@ -1,12 +1,12 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { companiesAPI } from '@/api/companies-api'
-import { companySchema, type Company } from '@/shared/schemas/company-schema'
+import { type Company } from '@/shared/schemas/company-schema'
 import { cloneDeep } from 'lodash'
-import { useLocalStorage } from '@vueuse/core'
 
 export const useCompanyStore = defineStore('company', () => {
   const companyTemplate: Company = {
+    id: null,
     name: '',
     discountCost: 0,
     rentalCost: 0,
@@ -16,10 +16,9 @@ export const useCompanyStore = defineStore('company', () => {
     hoursForFreeRent: 0,
     hoursForLastWeekBonus: 0,
   }
-  const company = ref<Company>(cloneDeep(companyTemplate))
-  const globalCompany = useLocalStorage('company', cloneDeep(companyTemplate))
 
   const companies = ref<Company[]>()
+  const company = ref<Company>(cloneDeep(companyTemplate))
 
   async function fetchCompanies() {
     companies.value = await companiesAPI.list()
@@ -39,23 +38,11 @@ export const useCompanyStore = defineStore('company', () => {
     return
   }
 
-  function setGlobalCompany() {
-    globalCompany.value = cloneDeep(companyTemplate)
-    company.value = cloneDeep(globalCompany.value)
-  }
-
-  function deleteGlobalCompany() {
-    globalCompany.value = null
-  }
-
   return {
     companies,
     company,
-    globalCompany,
     fetchCompanies,
     fetchCompany,
     createCompany,
-    setGlobalCompany,
-    deleteGlobalCompany,
   }
 })

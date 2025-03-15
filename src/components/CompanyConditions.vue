@@ -1,15 +1,11 @@
 <script lang="ts" setup>
+import { computed } from 'vue'
 import { MeterGroup } from 'primevue'
 import { formatHours } from '@/shared/utils'
-
-import { companyData } from '@/shared/companyData'
-import { computed } from 'vue'
 import { shiftsTotal } from '@/shared/shiftData'
 import type { Company } from '@/shared/schemas/company-schema'
 
-const { company } = defineProps<{
-  company: Company
-}>()
+const { company } = defineProps<{ company: Company }>()
 
 const meterItem = [
   {

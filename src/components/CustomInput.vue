@@ -1,20 +1,13 @@
 <script lang="ts" setup>
-const model = defineModel<number>({
-  required: true,
-  default: 0,
-  set(value) {
-    if (typeof value === 'string') value = 0
-    return value
-  },
-})
-
-const { max, disabled } = defineProps<{
+defineProps<{
   label?: string
   id?: string
-  showButtons?: boolean
+  value: number
   max?: number
-  disabled?: boolean
+  disabledIncrease?: boolean
+  disabledDecrease?: boolean
 }>()
+defineEmits(['increase', 'decrease'])
 </script>
 
 <template>
@@ -22,24 +15,22 @@ const { max, disabled } = defineProps<{
     <label :for="id" v-if="label">{{ label }}</label>
     <div class="custom-input">
       <input
+        :id
         type="text"
         inputmode="numeric"
         class="inputtext"
-        :id
-        v-model.number="model"
+        :value
         :max
       />
       <button
-        v-if="!showButtons"
         class="pi pi-plus inputnumber-button inputbutton-end"
-        @click="model++"
-        :disabled
+        @click="$emit('increase')"
+        :disabled="disabledIncrease"
       />
       <button
-        v-if="!showButtons"
         class="pi pi-minus inputnumber-button inputbutton-start"
-        @click="model--"
-        :disabled="model == 0"
+        @click="$emit('decrease')"
+        :disabled="disabledDecrease"
       />
     </div>
   </div>

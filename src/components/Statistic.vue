@@ -11,8 +11,6 @@ import {
   showMissedDates,
 } from '@/shared/shiftData'
 import { formattedDate } from '@/shared/date'
-
-defineProps<{ isLogin: boolean }>()
 </script>
 
 <template>
@@ -26,7 +24,7 @@ defineProps<{ isLogin: boolean }>()
         <h3 class="p-dialog-title">Статистика</h3>
       </div>
     </template>
-    <PeriodRange />
+
     <div class="period-modal">
       <ul class="period-list">
         <!-- <Button

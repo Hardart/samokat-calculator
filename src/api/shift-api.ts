@@ -10,11 +10,10 @@ export const shiftAPI = {
     })
     return data.value
   },
-  async getShiftsForWeek(courierId: string, query: object) {
+  async getShifts(courierId: string) {
     const { data } = await useHdFetch<ResponseApi.ShiftData.List>(
-      '/shifts/' + courierId,
-      { query }
+      '/shifts/' + courierId
     )
-    return data.value
+    return data.value || []
   },
 }

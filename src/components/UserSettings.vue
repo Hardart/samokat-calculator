@@ -1,50 +1,52 @@
 <script lang="ts" setup>
-import { useCourierStore } from '@/store/useCourierStore'
-import { useSettingsStore } from '@/store/useSettingStore'
-import { useShiftStore } from '@/store/useShiftStore'
 import SettingsCheckboxItem from './SettingsCheckboxItem.vue'
+import { useUser } from '@/composables/useUser'
+import { useLabels } from '@/composables/useLabels'
+import { ShiftManager } from '@/shared/ShiftManager'
+import { CostCalculator } from '@/shared/CostCalculator'
 
-const courierStore = useCourierStore()
-const settingsStore = useSettingsStore()
-const shiftStore = useShiftStore()
+const { lastWeekBonusLabel, extraDaysLabel } = useLabels()
+const { courier, isLogin } = useUser()
+const shift = ShiftManager.getComputedShift()
+const settings = ShiftManager.getComutedSettings()
 </script>
 
 <template>
-  <div v-if="courierStore.isLogin" class="settings">
+  <div class="settings">
     <div class="settings__base">
-      <div class="settings__item">
+      <div class="settings__item" v-if="isLogin">
         <p>Курьер</p>
-        <p>{{ courierStore.courier.name }}</p>
+        <p>{{ courier.name }}</p>
       </div>
     </div>
     <div class="settings__company">
-      <div class="settings__item">
+      <div class="settings__item" v-if="isLogin">
         <p>Компания</p>
-        <p>{{ courierStore.courier.company.name }}</p>
+        <p>{{ shift.company.name }}</p>
       </div>
 
       <div class="settings__item mt-m">
         <p>Базовая стоимость часа</p>
-        <p>{{ shiftStore.singleHourPrice }}₽</p>
+        <p>{{ CostCalculator.singleHourCost }}₽</p>
       </div>
 
       <div class="settings__item">
         <p>Cтоимость заказа</p>
-        <p>{{ shiftStore.singleOrderCost }}₽</p>
+        <p>{{ CostCalculator.singleOrderCost }}₽</p>
       </div>
 
       <SettingsCheckboxItem
-        v-if="courierStore.courier.company.hasLastWeekBonus"
-        v-model="settingsStore.storageSettings.isLastWeekHours"
-        :label="shiftStore.lastWeekBonusLabel"
+        v-if="shift.company.hasLastWeekBonus && isLogin"
+        v-model="settings.isLastWeekHours"
+        :label="lastWeekBonusLabel"
+      />
+
+      <SettingsCheckboxItem
+        v-model="settings.isExtraDay"
+        :label="extraDaysLabel"
       />
       <SettingsCheckboxItem
-        v-if="settingsStore.settings.extraDays.length"
-        v-model="settingsStore.storageSettings.isExtraDay"
-        :label="shiftStore.extraDaysLabel"
-      />
-      <SettingsCheckboxItem
-        v-model="settingsStore.storageSettings.isWeatherSurcharge"
+        v-model="settings.isWeatherSurcharge"
         label="Сегодня плохая погода?"
       />
     </div>

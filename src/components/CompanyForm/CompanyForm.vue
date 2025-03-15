@@ -1,51 +1,40 @@
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
+import { computed, inject } from 'vue'
+import { Button, Checkbox } from 'primevue'
 import HdForm from '../hdForm/HdForm.vue'
-import type { FormError } from '@/composables/useFormValidation'
-import { companySchema } from '@/shared/schemas/company-schema'
-import { InputText, InputNumber, Button, Checkbox, Message } from 'primevue'
-import { useCompanyStore } from '@/store/useCompanyStore'
-import { useCourierStore } from '@/store/useCourierStore'
-import FormNumberInput from '../FormNumberInput/FormNumberInput.vue'
+import { companySchema, type Company } from '@/shared/schemas/company-schema'
 import FormTextInput from '../FormTextInput/FormTextInput.vue'
+import FormNumberInput from '../FormNumberInput/FormNumberInput.vue'
 
-const courierStore = useCourierStore()
-const companyStore = useCompanyStore()
-const errorsMap = ref<Record<string, string>>()
 const step = defineModel<number>({ required: true })
+
+const companyFormData = inject<Company>('company-form')
+if (!companyFormData) throw Error('no company form data')
+
 const submitButtonLabel = computed(() =>
   step.value >= 3 ? 'Зарегистрировать' : 'Далее'
 )
 
+const emits = defineEmits(['on-finish'])
+
 const onFormSubmit = async () => {
-  errorsMap.value = {}
   step.value++
-  if (step.value >= 3) courierStore.createCourier()
+  if (step.value >= 3) emits('on-finish')
 }
-
-const onFormErrors = async (errors?: FormError[]) => {
-  errorsMap.value = errors?.reduce((acc, curr) => {
-    acc[curr.path] = curr.message
-    return acc
-  }, {} as Record<string, string>)
-}
-
-companyStore.deleteGlobalCompany()
 </script>
 
 <template>
   <div class="company-settings">
     <h1>Настройки компании</h1>
     <HdForm
-      :state="companyStore.company"
+      :state="companyFormData"
       :schema="companySchema"
       @on-submit="onFormSubmit"
-      @on-errors="onFormErrors"
     >
       <FormTextInput
         label="Название компании"
         id="name"
-        v-model="companyStore.company.name"
+        v-model="companyFormData.name"
         error-key="name"
       />
 
@@ -55,44 +44,44 @@ companyStore.deleteGlobalCompany()
         </label>
         <Checkbox
           inputId="is-last-week-bonus"
-          v-model="companyStore.company.hasLastWeekBonus"
+          v-model="companyFormData.hasLastWeekBonus"
           binary
         />
       </div>
 
       <FormNumberInput
-        v-if="companyStore.company.hasLastWeekBonus"
+        v-if="companyFormData.hasLastWeekBonus"
         label="Количество часов для бонуса за отработанные часы"
         id="last-week-bonus"
-        v-model="companyStore.company.hoursForLastWeekBonus"
+        v-model="companyFormData.hoursForLastWeekBonus"
       />
 
       <FormNumberInput
-        v-if="companyStore.company.hasLastWeekBonus"
+        v-if="companyFormData.hasLastWeekBonus"
         mode="currency"
         id="last-week-bonus-cost"
         label="Значение бонуса за отработанные часы"
-        v-model="companyStore.company.lastWeekBonusCost"
+        v-model="companyFormData.lastWeekBonusCost"
       />
 
       <FormNumberInput
-        v-if="companyStore.company.hasLastWeekBonus"
+        v-if="companyFormData.hasLastWeekBonus"
         id="free-rent-hours"
         label="Количество часов для бесплатной аренды"
-        v-model="companyStore.company.hoursForFreeRent"
+        v-model="companyFormData.hoursForFreeRent"
       />
 
       <FormNumberInput
         id="discount-rent-hours"
         label="Количество часов для скидки на аренду"
-        v-model="companyStore.company.hoursForDiscountRent"
+        v-model="companyFormData.hoursForDiscountRent"
       />
 
       <FormNumberInput
         mode="currency"
         id="rental-cost"
         label="Стоимость аренды"
-        v-model="companyStore.company.rentalCost"
+        v-model="companyFormData.rentalCost"
         error-key="rentalCost"
       />
 
@@ -100,7 +89,7 @@ companyStore.deleteGlobalCompany()
         mode="currency"
         id="discount-rental-cost"
         label="Стоимость аренды со скидкой"
-        v-model="companyStore.company.discountCost"
+        v-model="companyFormData.discountCost"
       />
 
       <Button @click="step--" v-if="step !== 1">Назад</Button>

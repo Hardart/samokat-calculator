@@ -9,13 +9,12 @@ const { state, schema } = defineProps<{
   state: Record<string, any>
   schema: z.AnyZodObject
 }>()
+
 const onSubmit = async () => {
   await getZodErrors(state, schema)
-
   if (errors.value.length) {
     console.error(`ZOD validation errors`)
     console.error(errors.value)
-    emits('on-errors', errors.value)
     return
   }
   emits('on-submit')
