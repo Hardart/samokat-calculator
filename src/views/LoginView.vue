@@ -10,11 +10,12 @@ import {
 } from '@/shared/schemas/courier-schema'
 import { useCourierStore } from '@/store/useCourierStore'
 import { useAppSettings } from '@/composables/useAppSettings'
-import { useShiftStore } from '@/store/useShiftStore'
+
 import HdForm from '@/components/hdForm/HdForm.vue'
 import type { FormError } from '@/composables/useFormValidation'
 import FormTextInput from '@/components/FormTextInput/FormTextInput.vue'
 import FormPasswordInput from '@/components/FormPasswordInput/FormPasswordInput.vue'
+import { useNewShiftStore } from '@/store/useNewShiftStore'
 
 const { appSettings } = useAppSettings()
 const loginForm: CourierLoginForm = {
@@ -23,7 +24,7 @@ const loginForm: CourierLoginForm = {
 }
 
 const onFormSubmit = async (e: FormError) => {
-  const shiftSrore = useShiftStore()
+  const shiftSrore = useNewShiftStore()
   const courierStore = useCourierStore()
   await courierStore.fetchCourier(loginForm)
 
@@ -31,7 +32,7 @@ const onFormSubmit = async (e: FormError) => {
 
   if (courierStore.isLogin) {
     await router.push('/')
-    shiftSrore.getShiftsList()
+    shiftSrore.fetchShifts(courierStore.courier.id!)
   }
 }
 </script>
