@@ -6,6 +6,7 @@ import { computed } from 'vue'
 
 export const useGlobalSettings = () => {
   const settingsTemplate: Settings = {
+    id: null,
     orderCost: 35,
     hourCost: 120,
     badWeatherSurcharge: 10,
