@@ -11,7 +11,6 @@ import Aura from '@primevue/themes/aura'
 import ToastService from 'primevue/toastservice'
 import { useCourierStore } from '@/store/useCourierStore'
 import KeyFilter from 'primevue/keyfilter'
-import { useShiftStore } from './store/useShiftStore'
 
 const app = createApp(App)
 const pinia = createPinia()
