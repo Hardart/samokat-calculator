@@ -12,7 +12,7 @@ const currentShift = ShiftManager.getComputedShift()
     <div class="input-group">
       <CustomInput
         label="Количество часов"
-        :value="currentShift.hours"
+        v-model.number="currentShift.hours"
         @increase="ShiftCalculator.incrementHours"
         @decrease="ShiftCalculator.decrementHours"
       />
@@ -20,7 +20,7 @@ const currentShift = ShiftManager.getComputedShift()
     <div class="input-group mt-s">
       <CustomInput
         label="Количество заказов"
-        :value="currentShift.orders"
+        v-model.number="currentShift.orders"
         @increase="ShiftCalculator.incrementOrders"
         @decrease="ShiftCalculator.decrementOrders"
       />

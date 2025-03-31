@@ -5,13 +5,13 @@ type AggregatedData = {
   month: number
 }
 type MonthMap = Map<string, AggregatedData>
-import type { Shift } from '@/shared/schemas/shift-schema'
 import { computed, reactive, ref } from 'vue'
-import { useShiftStore } from '@/store/useShiftStore'
+import { useNewShiftStore } from '@/store/useNewShiftStore'
 import { formattedIntlDate, getWeekRange, getMonthRange } from '@/shared/date'
+import type { Shift } from '@/shared/ShiftClass'
 
 export const useShiftsFilter = () => {
-  const shiftStore = useShiftStore()
+  const shiftStore = useNewShiftStore()
 
   const monthData = reactive({
     month: -1,
@@ -30,8 +30,8 @@ export const useShiftsFilter = () => {
       if (!yearMap.has(monthLabel)) _setDefaultYearMap(yearMap, monthLabel)
 
       const monthData = yearMap.get(monthLabel)!
-      monthData.orders += currShift.orders.total
-      monthData.hours += currShift.workHours
+      monthData.orders += currShift.orders
+      monthData.hours += currShift.hours
       monthData.tips += currShift.tips
       monthData.month = month
 

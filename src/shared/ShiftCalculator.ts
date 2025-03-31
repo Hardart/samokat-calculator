@@ -22,53 +22,54 @@ export class ShiftCalculator {
     if (this.shift.value.orders > 0) this.shift.value.orders--
   }
 
-  static incrementMorningOrders = () => {
-    if (this.isOrdersGreaterThanSurcharges.value)
-      this.shift.value.morningOrders++
+  static incrementPartOfDayOrders = (type: 'morning' | 'evening' | 'night') => {
+    if (this._isOrdersGreaterThanSurcharges.value)
+      this.shift.value[`${type}Orders`]++
   }
 
-  static decrementMorningOrders = () => {
-    if (this.shift.value.morningOrders > 0) this.shift.value.morningOrders--
+  static decrementPartOfDayOrders = (type: 'morning' | 'evening' | 'night') => {
+    if (this.shift.value[`${type}Orders`] > 0)
+      this.shift.value[`${type}Orders`]--
   }
 
-  static incrementNightOrders = () => {
-    if (this.isOrdersGreaterThanSurcharges.value) this.shift.value.nightOrders++
-  }
-
-  static decrementNightOrders = () => {
-    if (this.shift.value.nightOrders > 0) this.shift.value.nightOrders--
-  }
-
-  private static get isOrdersGreaterThanSurcharges() {
+  private static get _isOrdersGreaterThanSurcharges() {
     return computed(() => {
-      const { orders, morningOrders, nightOrders } = this.shift.value
-      const surchargesCount = morningOrders + nightOrders
+      const { orders, morningOrders, nightOrders, eveningOrders } =
+        this.shift.value
+      const surchargesCount = morningOrders + nightOrders + eveningOrders
       return orders > surchargesCount
     })
   }
 
-  private static get isOrdersGraterOrEqualSurcharges() {
+  private static get _isOrdersGraterOrEqualSurcharges() {
     return computed(() => {
-      const { orders, morningOrders, nightOrders } = this.shift.value
-      const surchargesCount = morningOrders + nightOrders
+      const { orders, morningOrders, nightOrders, eveningOrders } =
+        this.shift.value
+      const surchargesCount = morningOrders + nightOrders + eveningOrders
       return orders >= surchargesCount
     })
   }
 
   static get isIncreaseDisable() {
-    return !this.isOrdersGreaterThanSurcharges.value
+    return !this._isOrdersGreaterThanSurcharges.value
   }
 
-  private static get surchargesTotal() {
-    const { settings, morningOrders, nightOrders } = this.shift.value
+  private static get _surchargesTotal() {
+    const { settings, morningOrders, nightOrders, eveningOrders } =
+      this.shift.value
+    const { nightSurcharge, morningSurcharge, eveningSurcharge } = settings
+
     return (
-      morningOrders * settings.morningSurcharge +
-      nightOrders * settings.nightSurcharge
+      morningOrders * morningSurcharge +
+      nightOrders * nightSurcharge +
+      eveningOrders * eveningSurcharge
     )
   }
 
-  private static get surcharge() {
-    return this.isOrdersGraterOrEqualSurcharges.value ? this.surchargesTotal : 0
+  private static get _surcharges() {
+    return this._isOrdersGraterOrEqualSurcharges.value
+      ? this._surchargesTotal
+      : 0
   }
 
   // Вычисляем заработок текущей смены
@@ -78,7 +79,9 @@ export class ShiftCalculator {
       const { orders, tips, hours } = this.shift.value
       const baseEarnings = orders * CostCalculator.singleOrderCost.value
       const hourEarnings = hours * CostCalculator.singleHourCost.value
-      return baseEarnings + hourEarnings + this.surcharge + tips
+      const total = baseEarnings + hourEarnings + this._surcharges + tips
+      this.shift.value.totalEarnings = total
+      return total
     })
   }
 }

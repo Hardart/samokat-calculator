@@ -19,14 +19,31 @@ const settings = ShiftManager.getComutedSettings()
         <p>{{ courier.name }}</p>
       </div>
     </div>
-    <div class="settings__company">
+    <div class="settings__company mt-m">
       <div class="settings__item" v-if="isLogin">
         <p>Компания</p>
         <p>{{ shift.company.name }}</p>
       </div>
 
-      <div class="settings__item mt-m">
-        <p>Базовая стоимость часа</p>
+      <div class="mt-l">
+        <SettingsCheckboxItem
+          v-if="shift.company.hasLastWeekBonus && isLogin"
+          v-model="settings.isLastWeekHours"
+          :label="lastWeekBonusLabel"
+        />
+
+        <SettingsCheckboxItem
+          v-model="settings.isExtraDay"
+          :label="extraDaysLabel"
+        />
+        <SettingsCheckboxItem
+          v-model="settings.isWeatherSurcharge"
+          label="Сегодня плохая погода?"
+        />
+      </div>
+
+      <div class="settings__item mt-l">
+        <p>Стоимость часа</p>
         <p>{{ CostCalculator.singleHourCost }}₽</p>
       </div>
 
@@ -34,21 +51,6 @@ const settings = ShiftManager.getComutedSettings()
         <p>Cтоимость заказа</p>
         <p>{{ CostCalculator.singleOrderCost }}₽</p>
       </div>
-
-      <SettingsCheckboxItem
-        v-if="shift.company.hasLastWeekBonus && isLogin"
-        v-model="settings.isLastWeekHours"
-        :label="lastWeekBonusLabel"
-      />
-
-      <SettingsCheckboxItem
-        v-model="settings.isExtraDay"
-        :label="extraDaysLabel"
-      />
-      <SettingsCheckboxItem
-        v-model="settings.isWeatherSurcharge"
-        label="Сегодня плохая погода?"
-      />
     </div>
   </div>
 </template>

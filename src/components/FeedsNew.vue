@@ -18,9 +18,9 @@ const shift = ShiftManager.getComputedShift()
   >
     <div class="input-group">
       <CustomInput
-        :value="shift.morningOrders"
-        @increase="ShiftCalculator.incrementMorningOrders"
-        @decrease="ShiftCalculator.decrementMorningOrders"
+        v-model="shift.morningOrders"
+        @increase="ShiftCalculator.incrementPartOfDayOrders('morning')"
+        @decrease="ShiftCalculator.decrementPartOfDayOrders('morning')"
         label="Утренние заказы (7:00-8:00)"
         id="morning"
         :disabled-increase="ShiftCalculator.isIncreaseDisable"
@@ -29,11 +29,22 @@ const shift = ShiftManager.getComputedShift()
 
     <div class="input-group mt-m">
       <CustomInput
-        :value="shift.nightOrders"
-        @increase="ShiftCalculator.incrementNightOrders"
-        @decrease="ShiftCalculator.decrementNightOrders"
+        v-model="shift.eveningOrders"
+        @increase="ShiftCalculator.incrementPartOfDayOrders('evening')"
+        @decrease="ShiftCalculator.decrementPartOfDayOrders('evening')"
+        label="Вечерние заказы (23:00-00:00)"
+        id="evening"
+        :disabled-increase="ShiftCalculator.isIncreaseDisable"
+      />
+    </div>
+
+    <div class="input-group mt-m">
+      <CustomInput
+        v-model="shift.nightOrders"
+        @increase="ShiftCalculator.incrementPartOfDayOrders('night')"
+        @decrease="ShiftCalculator.decrementPartOfDayOrders('night')"
         label="Ночные заказы (00:00-01:00)"
-        id="nightOrders"
+        id="night"
         :disabled-increase="ShiftCalculator.isIncreaseDisable"
       />
     </div>

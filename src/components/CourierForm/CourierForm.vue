@@ -54,7 +54,7 @@ const onFormSubmit = async () => {
         error-key="password"
       />
 
-      <Button @click="step--" v-if="step !== 1">Назад</Button>
+      <Button @click="step--" v-if="step !== 1">Шаг назад</Button>
       <Button type="submit"> {{ submitButtonLabel }} </Button>
     </HdForm>
   </div>

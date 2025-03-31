@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
-import type { Shift } from '@/shared/schemas/shift-schema'
 import { formatHours, formatOrders } from '@/shared/utils'
+import type { Shift } from '@/shared/ShiftClass'
 
 interface ShiftsTotal {
   orders: number
@@ -14,8 +14,8 @@ const { shifts } = defineProps<{ shifts: Shift[] }>()
 const total = computed(() =>
   shifts.reduce(
     (acc, curr) => {
-      acc.orders += curr.orders.total
-      acc.hours += curr.workHours
+      acc.orders += curr.orders
+      acc.hours += curr.hours
       acc.tips += curr.tips
       acc.totalEarnings += curr.totalEarnings
 

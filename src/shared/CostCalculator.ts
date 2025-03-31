@@ -28,8 +28,12 @@ export class CostCalculator {
   static get rating() {
     return computed(() => {
       const { orders, hours } = this.shift.value
-      return orders && hours ? Number(orders / hours).toFixed(2) : 0
+      return this.calcRating(orders, hours)
     })
+  }
+
+  static calcRating(orders: number, hours: number) {
+    return orders && hours ? Number(orders / hours).toFixed(2) : 0
   }
 
   private static _addExtraDaySurcharge(settings: Settings) {

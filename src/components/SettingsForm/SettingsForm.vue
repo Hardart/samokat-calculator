@@ -3,7 +3,8 @@ import { computed, inject, type Ref } from 'vue'
 import { MultiSelect, SelectButton, Button, Checkbox } from 'primevue'
 import HdForm from '../hdForm/HdForm.vue'
 import FormNumberInput from '../FormNumberInput/FormNumberInput.vue'
-import { settingsSchema, type Settings } from '@/shared/schemas/settings-schema'
+import { settingsSchema } from '@/shared/schemas/settings-schema'
+import type { Settings } from '@/shared/SettingsClass'
 
 const settingsFormData = inject<Settings>('settings-form')
 if (!settingsFormData) throw Error('no courier form data')
@@ -143,7 +144,7 @@ const extraDaysLengthMessage = computed(
         />
       </div>
 
-      <Button @click="step--" v-if="step !== 1">Назад</Button>
+      <Button @click="step--" v-if="step !== 1">Шаг назад</Button>
       <Button type="submit"> {{ submitButtonLabel }} </Button>
     </HdForm>
   </div>

@@ -1,19 +1,20 @@
 <script lang="ts" setup>
+import { CostCalculator } from '@/shared/CostCalculator'
 import { formattedDate } from '@/shared/date'
-import type { Shift } from '@/shared/schemas/shift-schema'
+import type { Shift } from '@/shared/ShiftClass'
 import { formatHours, formatOrders } from '@/shared/utils'
 import { Button } from 'primevue'
 
 defineProps<{ shift: Shift }>()
+defineEmits(['delete-shift'])
 </script>
 
 <template>
   <li class="shift-item mt-s">
     <h3 class="shift-item__weekday">{{ formattedDate(true, shift.date) }}</h3>
-    {{ shift }}
     <p>
-      {{ formatHours(shift.workHours) }},
-      {{ formatOrders(shift.orders.total) }}
+      {{ formatHours(shift.hours) }},
+      {{ formatOrders(shift.orders) }}
     </p>
 
     <p>
@@ -23,6 +24,13 @@ defineProps<{ shift: Shift }>()
     <p>
       Заработал
       <span class="shift-item__cost-value">{{ shift.totalEarnings }}₽</span>
+    </p>
+
+    <p>
+      Нагрузка за день
+      <span class="shift-item__cost-value">{{
+        CostCalculator.calcRating(shift.orders, shift.hours)
+      }}</span>
     </p>
     <div class="period-controls">
       <Button
@@ -39,6 +47,7 @@ defineProps<{ shift: Shift }>()
         variant="text"
         icon="pi pi-trash"
         size="small"
+        @click="$emit('delete-shift', shift.id)"
       />
       <RouterView />
     </div>

@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { Button } from 'primevue'
-import { ShiftManager } from '@/shared/ShiftManager'
 import { ShiftCalculator } from '@/shared/ShiftCalculator'
 import { useLabels } from '@/composables/useLabels'
 import { useNewShiftStore } from '@/store/useNewShiftStore'
@@ -18,13 +17,13 @@ const labels = useLabels()
       fluid
       class="save-btn"
       :label="labels.saveButtonLabel.value"
-      @click="shiftStore.addShift"
+      @click="shiftStore.saveShift"
       :disabled="shiftStore.isShiftSaved"
     />
     <Button
       label="Сбросить"
       class="save-btn"
-      @click="ShiftManager.resetCurrentShift"
+      @click="shiftStore.resetShift"
       fluid
       severity="warn"
     />

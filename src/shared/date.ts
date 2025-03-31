@@ -22,6 +22,13 @@ export function isToday(date: Date | string) {
   return new Date(date).toLocaleDateString() === today.toLocaleDateString()
 }
 
+export function isDatesEqual(date: Date | string, comparrDate: Date | string) {
+  return (
+    new Date(date).toLocaleDateString() ===
+    new Date(comparrDate).toLocaleDateString()
+  )
+}
+
 export const dayId = today.getDay()
 
 export const dayAndMonth = (date: string | Date) => {

@@ -1,8 +1,15 @@
 <script lang="ts" setup>
+const vModel = defineModel<number>({
+  required: true,
+
+  set(value) {
+    if (typeof value === 'string' && value === '') value = 0
+    return value
+  },
+})
 defineProps<{
   label?: string
   id?: string
-  value: number
   max?: number
   disabledIncrease?: boolean
   disabledDecrease?: boolean
@@ -19,7 +26,7 @@ defineEmits(['increase', 'decrease'])
         type="text"
         inputmode="numeric"
         class="inputtext"
-        :value
+        v-model="vModel"
         :max
       />
       <button

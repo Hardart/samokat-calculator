@@ -5,12 +5,10 @@ import HdForm from '../hdForm/HdForm.vue'
 import { companySchema, type Company } from '@/shared/schemas/company-schema'
 import FormTextInput from '../FormTextInput/FormTextInput.vue'
 import FormNumberInput from '../FormNumberInput/FormNumberInput.vue'
-import type { Settings } from '@/shared/SettingsClass'
 
 const step = defineModel<number>({ required: true })
 
 const companyFormData = inject<Company>('company-form')
-const settingsFormData = inject<Settings>('settings-form')
 if (!companyFormData) throw Error('no company form data')
 
 const submitButtonLabel = computed(() =>
@@ -66,7 +64,6 @@ const onFormSubmit = async () => {
         v-model="companyFormData.lastWeekBonus.cost"
       />
 
-      <div v-if="settingsFormData?.isRentingTransport"></div>
       <FormNumberInput
         v-if="companyFormData.hasLastWeekBonus"
         id="free-rent-hours"

@@ -17,7 +17,7 @@ export const useLabels = () => {
   })
 
   const saveButtonLabel = computed(() => {
-    return !shiftStore.shifts.length
+    return shiftStore.loadingShifts
       ? 'Загрузка'
       : shiftStore.isShiftSaved
       ? 'Сохранено'

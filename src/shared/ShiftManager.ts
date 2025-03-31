@@ -1,7 +1,9 @@
-import { computed, unref, type MaybeRef } from 'vue'
+import { computed, unref, type MaybeRef, type Ref } from 'vue'
 import { useLocalStorage } from '@vueuse/core'
 import { cloneDeep } from 'lodash'
 import { Shift } from './ShiftClass'
+import type { ZShift } from './schemas/shift-schema'
+import { isDatesEqual } from './date'
 
 export class ShiftManager {
   // Текущая смена, хранящаяся в localStorage
@@ -12,49 +14,74 @@ export class ShiftManager {
 
   static resetCurrentShift = () => {
     const shift = Shift.getInstance()
+    const company = cloneDeep(this.currentShift.value.company)
+    const settings = cloneDeep(this.currentShift.value.settings)
     this.currentShift.value = cloneDeep(shift)
+    this.currentShift.value.company = company
+    this.currentShift.value.settings = settings
   }
 
   // Добавить новую смену
-  static addShift(shift: Shift, shiftList: Shift[]) {
-    shiftList.push(shift)
+  static addShift(courierId: string): ZShift {
+    const shift = ShiftManager.getComputedShift()
+    return this.transformShiftToZodModel(shift.value, courierId)
+  }
+
+  // Найти смену по ID
+  static findShiftById(
+    shiftId: string,
+    shiftList: ZShift[]
+  ): ZShift | undefined {
+    return shiftList.find((shift) => shift.id === shiftId)
   }
 
   // Найти смену по дате
-  static findShift(date: string, shiftList: Shift[]): Shift | undefined {
-    return shiftList.find((shift) => shift.date === date)
+  static findShiftByDate(
+    shiftDate: Date,
+    shiftList: ZShift[]
+  ): ZShift | undefined {
+    return shiftList.find((shift) => isDatesEqual(shift.date, shiftDate))
+  }
+
+  // Удалить смену по Id
+  static deleteShift(shiftId: string, shiftList: Ref<ZShift[]>): void {
+    shiftList.value = shiftList.value.filter((shift) => shift.id !== shiftId)
+    return
   }
 
   // Обновить данные смены
   static updateShift(
-    date: string,
-    shiftList: Shift[],
+    shiftId: string,
+    shiftList: ZShift[],
     updatedData: Partial<Shift>
   ) {
-    const shift = this.findShift(date, shiftList)
+    const shift = this.findShiftById(shiftId, shiftList)
     if (!shift) throw new Error('Shift not found')
 
     // Обновляем смену в массиве
     Object.assign(shift, updatedData)
 
-    // Обновляем текущую смену в localStorage, если она совпадает
-    if (this.currentShift.value && this.currentShift.value.date === date) {
-      Object.assign(this.currentShift.value, updatedData)
-    }
+    // // Обновляем текущую смену в localStorage, если она совпадает
+    // if (
+    //   this.currentShift.value &&
+    //   this.currentShift.value
+    // ) {
+    //   Object.assign(this.currentShift.value, updatedData)
+    // }
   }
 
   // Выбрать смену для работы
-  static selectShift(date: string, shiftList: Shift[]) {
-    const shift = this.findShift(date, shiftList)
+  static selectShift(shiftId: string, shiftList: ZShift[]) {
+    const shift = this.findShiftById(shiftId, shiftList)
     if (!shift) throw new Error('Shift not found')
-    this.currentShift.value = shift
+    return shift
   }
 
   //Сохранена ли смена
-  static isPeriodSaved(shiftList: MaybeRef<Shift[]>) {
-    const shift = ShiftManager.getComputedShift().value
+  static isPeriodSaved(shiftList: MaybeRef<ZShift[]>) {
     shiftList = unref(shiftList)
-    return shiftList.some((shiftitem) => shift.id && shiftitem.id === shift.id)
+    const shift = this.findShiftByDate(new Date(), shiftList)
+    return shift ? true : false
   }
 
   // Получить текущую смену
@@ -69,5 +96,21 @@ export class ShiftManager {
 
   static getComutedSettings() {
     return computed(() => this.currentShift.value.settings)
+  }
+
+  static transformShiftToZodModel(shift: Shift, courierId: string): ZShift {
+    return {
+      courier: courierId,
+      morningOrders: shift.morningOrders,
+      eveningOrders: shift.eveningOrders,
+      nightOrders: shift.nightOrders,
+      hourCost: shift.settings.hourCost,
+      orderCost: shift.settings.orderCost,
+      orders: shift.orders,
+      hours: shift.hours,
+      tips: shift.tips,
+      totalEarnings: shift.totalEarnings,
+      date: new Date(),
+    }
   }
 }

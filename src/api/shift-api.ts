@@ -1,9 +1,10 @@
 import type { ResponseApi } from '@/shared/types/ResponseAPI'
-import type { Shift } from '@/shared/schemas/shift-schema'
+
 import { useHdFetch } from './base-fetch/base-fetch'
+import type { ZShift } from '@/shared/schemas/shift-schema'
 
 export const shiftAPI = {
-  async saveShift(body: Shift) {
+  async saveShift(body: ZShift) {
     const { data } = await useHdFetch<ResponseApi.ShiftData.Single>('/shifts', {
       method: 'post',
       body,
@@ -15,5 +16,12 @@ export const shiftAPI = {
       '/shifts/' + courierId
     )
     return data.value || []
+  },
+  async deleteShift(shiftId: string) {
+    const { data } = await useHdFetch<ResponseApi.ShiftData.Single>(
+      '/shifts/' + shiftId,
+      { method: 'delete' }
+    )
+    return data.value
   },
 }

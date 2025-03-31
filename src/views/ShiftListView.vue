@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { SelectButton, Button } from 'primevue'
-import { useShiftStore } from '@/store/useShiftStore'
 import PeriodRange from '@/components/PeriodRange.vue'
 import ShiftsTotal from '@/components/ShiftsTotal.vue'
 import ShiftItem from '@/components/ShiftItem/ShiftItem.vue'
 import { formatHours, formatOrders } from '@/shared/utils'
 import { useShiftsFilter } from '@/composables/useShiftsFilter'
+import { useNewShiftStore } from '@/store/useNewShiftStore'
+import Confirm from '@/components/Confirm.vue'
+import { useToggle } from '@vueuse/core'
 
-const shiftsStore = useShiftStore()
+const shiftsStore = useNewShiftStore()
 
 const options = ref([
   { option: 'week', label: 'Неделя' },
@@ -26,6 +28,14 @@ const {
   setRange,
   setPeriodToMonth,
 } = useShiftsFilter()
+
+const [isConfirmOpen, toggleConfirmState] = useToggle()
+let shiftId: string
+
+const onDeleteShift = (id: string) => {
+  toggleConfirmState(true)
+  shiftId = id
+}
 </script>
 
 <template>
@@ -74,7 +84,11 @@ const {
       </li>
     </ul>
     <ul class="shift-list" v-if="isWeekPeriod">
-      <ShiftItem v-for="shift in filteredShiftsByPeriod" :shift />
+      <ShiftItem
+        v-for="shift in filteredShiftsByPeriod"
+        :shift
+        @delete-shift="onDeleteShift"
+      />
     </ul>
     <div v-if="isPeriodNull">
       <div class="period-switch">
@@ -94,7 +108,14 @@ const {
         <ShiftItem v-for="shift in filterBy" :shift />
       </ul>
     </div>
-    <ShiftsTotal :shifts="filteredShiftsByPeriod" v-if="isWeekPeriod" />
+    <ShiftsTotal
+      :shifts="filteredShiftsByPeriod"
+      v-if="isWeekPeriod && filteredShiftsByPeriod.length"
+    />
+    <Confirm
+      v-model="isConfirmOpen"
+      @confirm="shiftsStore.deleteShift(shiftId)"
+    />
   </main>
 </template>
 

@@ -54,7 +54,6 @@ const { appSettings } = useAppSettings()
 
 .settings__base {
   display: grid;
-  margin-bottom: 30px;
 }
 
 .settings__item {

@@ -11,6 +11,7 @@ import Aura from '@primevue/themes/aura'
 import ToastService from 'primevue/toastservice'
 import { useCourierStore } from '@/store/useCourierStore'
 import KeyFilter from 'primevue/keyfilter'
+import { useNewShiftStore } from './store/useNewShiftStore'
 
 const app = createApp(App)
 const pinia = createPinia()
@@ -21,6 +22,6 @@ app.use(router)
 app.use(pinia)
 ;(async function () {
   await useCourierStore().autoLogin()
-  // useShiftStore().getShiftsList()
+  useNewShiftStore().preloadShifts()
   app.mount('#app')
 })()

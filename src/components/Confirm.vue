@@ -1,7 +1,11 @@
 <script lang="ts" setup>
 import { Dialog, Button } from 'primevue'
 const isOpen = defineModel<boolean>({ required: true })
-defineEmits(['confirm', 'cancel'])
+const emit = defineEmits(['confirm', 'cancel'])
+const onConfirm = () => {
+  emit('confirm')
+  isOpen.value = false
+}
 </script>
 
 <template>
@@ -11,20 +15,19 @@ defineEmits(['confirm', 'cancel'])
     :closable="false"
     content-class="confirm-dialog"
     modal
-    maximizable
   >
     <Button
       label="Отменить"
       size="small"
       icon="pi pi-times"
       severity="danger"
-      @click="$emit('cancel')"
+      @click="isOpen = false"
     />
     <Button
       label="Подвердить"
       size="small"
       icon="pi pi-check"
-      @click="$emit('confirm')"
+      @click="onConfirm"
     />
   </Dialog>
 </template>

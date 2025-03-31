@@ -6,11 +6,13 @@ import type {
 import { courierAPI } from '@/api/courier-api'
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
-import { useSettingsStore } from './useSettingStore'
 import { cloneDeep } from 'lodash'
+import { useSettingsStore } from './useSettingStore'
 import { useCompanyStore } from './useCompanyStore'
 import type { Company } from '@/shared/schemas/company-schema'
-import type { Settings } from '@/shared/schemas/settings-schema'
+import { SettingsManager } from '@/shared/SettingsManager'
+import { CompanyManager } from '@/shared/CompanyManager'
+import type { Settings } from '@/shared/SettingsClass'
 
 let resolveSimplePromise: (value: boolean) => void
 export interface ICreatedParams {
@@ -47,9 +49,10 @@ export const useCourierStore = defineStore('courier', () => {
     if (!data) return null
 
     courier.value = data
-    settingsStore.settings = data.settings
-    companyStore.company = data.company
+    console.log(data.settings)
 
+    SettingsManager.updateSettings(data.settings)
+    CompanyManager.updateCompany(data.company)
     return courier.value
   }
 
@@ -58,8 +61,8 @@ export const useCourierStore = defineStore('courier', () => {
     if (!data) return null
 
     courier.value = data
-    settingsStore.settings = data.settings
-    companyStore.company = data.company
+    SettingsManager.updateSettings(data.settings)
+    CompanyManager.updateCompany(data.company)
     return data
   }
 
@@ -68,8 +71,8 @@ export const useCourierStore = defineStore('courier', () => {
     resolveSimplePromise(true)
     if (!data) return
     courier.value = data
-    settingsStore.settings = data.settings
-    companyStore.company = data.company
+    SettingsManager.updateSettings(data.settings)
+    CompanyManager.updateCompany(data.company)
   }
 
   async function logout() {
@@ -77,8 +80,8 @@ export const useCourierStore = defineStore('courier', () => {
     const res = await courierAPI.logout(courier.value.id)
     if (!res) return
     courier.value = cloneDeep(courierTemplate)
-    settingsStore.settings = courier.value.settings
-    companyStore.company = courier.value.company
+    SettingsManager.setDefaultSettings()
+    CompanyManager.setDefaultCompany()
     return
   }
 

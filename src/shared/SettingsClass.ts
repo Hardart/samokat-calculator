@@ -1,9 +1,10 @@
 export class GlobalSettongs {
+  id = null
   orderCost = 35
   hourCost = 120
   badWeatherSurcharge = 10
   morningSurcharge = 30
-  eveningSurcharge = 0
+  eveningSurcharge = 30
   nightSurcharge = 70
   extraDaySurcharge = 15
   isExtraDay = false

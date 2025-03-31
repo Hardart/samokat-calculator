@@ -3,6 +3,7 @@ type Rent = {
   freeHours: number
   discountHours: number
   discountCost: number
+  cost: number
 }
 
 type lastWeekBonus = {
@@ -11,6 +12,7 @@ type lastWeekBonus = {
 }
 // Модель компании
 export class Company {
+  id: string | null = null
   name = ''
   hasRent = false
   hasLastWeekBonus = true
@@ -20,11 +22,12 @@ export class Company {
     freeHours: 0,
     discountHours: 0,
     discountCost: 0,
+    cost: 0,
   }
 
   lastWeekBonus: lastWeekBonus = {
-    hours: 30,
-    cost: 5,
+    hours: 0,
+    cost: 0,
   }
 
   // Статическое свойство для хранения единственного экземпляра

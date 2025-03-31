@@ -2,15 +2,13 @@
 import { ButtonGroup, Button } from 'primevue'
 import { dayAndMonth, getWeekRange } from '@/shared/date'
 import { computed } from 'vue'
-const { weekOffset } = defineProps<{
-  weekOffset: number
-}>()
 
+const { weekOffset } = defineProps<{ weekOffset: number }>()
 defineEmits(['encrease', 'decrease'])
 
 const rangeLabel = computed(() => {
   const { startDate, endDate } = getWeekRange(weekOffset)
-  return `C ${dayAndMonth(startDate)} по ${dayAndMonth(endDate)}`
+  return `Период с ${dayAndMonth(startDate)} по ${dayAndMonth(endDate)}`
 })
 </script>
 
@@ -33,6 +31,7 @@ const rangeLabel = computed(() => {
           icon="pi pi-angle-right"
           @click="$emit('decrease', false)"
           variant="text"
+          :disabled="!weekOffset"
         />
       </ButtonGroup>
     </div>

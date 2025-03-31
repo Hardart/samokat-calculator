@@ -1,6 +1,7 @@
 import type { Company } from '../schemas/company-schema'
 import type { Courier } from '../schemas/courier-schema'
 import type { Settings } from '../schemas/settings-schema'
+import type { ZShift } from '../schemas/shift-schema'
 import type { Shift } from '../ShiftClass'
 
 export interface CustomFetchOptions {
@@ -42,7 +43,7 @@ export declare namespace ResponseApi {
   }
 
   namespace ShiftData {
-    type List = Shift[]
-    type Single = Shift
+    type List = ZShift[]
+    type Single = ZShift
   }
 }
