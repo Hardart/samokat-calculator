@@ -15,21 +15,21 @@ import HdInput from './HdInput.vue'
     <div class="input-group">
       <HdInput
         v-model="ordersData.morningOrders"
-        label="Утренние заказы (7:00-9:00)"
+        label="Утренние заказы (07:00-08:00)"
         id="morning"
       />
     </div>
     <div class="input-group mt-m">
       <HdInput
         v-model="ordersData.eveningOrders"
-        label="Вечерние заказы (18:00-23:00)"
+        label="Вечерние заказы (23:00-00:00)"
         id="eveningOrders"
       />
     </div>
     <div class="input-group mt-m">
       <HdInput
         v-model="ordersData.nightOrders"
-        label="Ночные заказы (23:00-01:00)"
+        label="Ночные заказы (00:00-01:00)"
         id="nightOrders"
       />
     </div>
