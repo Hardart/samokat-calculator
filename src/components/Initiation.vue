@@ -6,7 +6,7 @@ import { useToast } from 'primevue/usetoast'
 const toast = useToast()
 
 const showSticky = () => {
-  if (updates.value) return
+  if (!updates.value) return
   toast.add({
     severity: 'secondary',
     group: 'bc',
