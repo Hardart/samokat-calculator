@@ -15,6 +15,7 @@ export interface Shift {
   morningOrders: number
   eveningOrders: number
   nightOrders: number
+  heavyOrders: number
   hours: number
   tips: number
   isWeather: boolean
@@ -30,6 +31,7 @@ export const shift: Shift = {
   morningOrders: 0,
   eveningOrders: 0,
   nightOrders: 0,
+  heavyOrders: 0,
   tips: 0,
   isWeather: false,
   isExtraDay: false,
@@ -116,6 +118,7 @@ const setShiftFromInputsData = (includeDate: boolean = false) => {
   shift.morningOrders = ordersData.value.morningOrders
   shift.eveningOrders = ordersData.value.eveningOrders
   shift.nightOrders = ordersData.value.nightOrders
+  shift.heavyOrders = ordersData.value.heavyOrders
   shift.hours = hoursData.value.hours
   shift.tips = ordersData.value.tips
   shift.isWeather = settings.value.isExtraWeatherMoney
@@ -129,6 +132,7 @@ const setShiftForEditFromInputsData = () => {
   shiftToEdit.morningOrders = ordersData.value.morningOrders
   shiftToEdit.eveningOrders = ordersData.value.eveningOrders
   shiftToEdit.nightOrders = ordersData.value.nightOrders
+  shiftToEdit.heavyOrders = ordersData.value.heavyOrders
   shiftToEdit.hours = hoursData.value.hours
   shiftToEdit.tips = ordersData.value.tips
   shiftToEdit.isWeather = settings.value.isExtraWeatherMoney
@@ -159,6 +163,7 @@ export const toggleEditShiftMode = (shiftItem: Shift) => {
   ordersData.value.morningOrders = shiftItem.morningOrders
   ordersData.value.eveningOrders = shiftItem.eveningOrders
   ordersData.value.nightOrders = shiftItem.nightOrders
+  ordersData.value.heavyOrders = shiftItem.heavyOrders
   ordersData.value.tips = shiftItem.tips
   settings.value.isExtraWeatherMoney = shiftItem.isWeather
   settings.value.isExtraDay = shiftItem.isExtraDay

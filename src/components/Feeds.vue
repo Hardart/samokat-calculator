@@ -14,6 +14,13 @@ import HdInput from './HdInput.vue'
   >
     <div class="input-group">
       <HdInput
+        v-model="ordersData.heavyOrders"
+        label="Тяжелые заказы"
+        id="heavyOrders"
+      />
+    </div>
+    <div class="input-group mt-m">
+      <HdInput
         v-model="ordersData.morningOrders"
         label="Утренние заказы (07:00-08:00)"
         id="morning"
